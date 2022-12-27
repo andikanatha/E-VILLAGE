@@ -80,7 +80,104 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
   }
 
   Widget pembayaranui() {
-    return Column();
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      child: ListView(
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                height: 50,
+                margin: EdgeInsets.only(top: 15),
+                child: TextFormField(
+                    validator: (val) => val!.isEmpty ? '' : null,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                        filled: true,
+                        fillColor: inputtxtbg,
+                        hintStyle: GoogleFonts.poppins(
+                          fontSize: 12,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: surfacecolor,
+                        ),
+                        hintText: 'Anda ingin mencari apa?')),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: 1,
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("19-10-2022"),
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: 2,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            margin: EdgeInsets.symmetric(
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color.fromARGB(37, 0, 0, 0),
+                                  spreadRadius: 2,
+                                  blurRadius: 7,
+                                  offset: Offset(
+                                      0, 3), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: ListTile(
+                              title: Text(
+                                "Laporan 1",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Text("12-12-2022"),
+                              trailing: Icon(Icons.arrow_forward_ios_rounded),
+                              leading: Container(
+                                  decoration: BoxDecoration(
+                                      color: Color.fromARGB(255, 218, 236, 242),
+                                      borderRadius: BorderRadius.circular(7)),
+                                  height: 60,
+                                  width: 60,
+                                  child: Center(
+                                    child: Icon(Icons.report),
+                                  )),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget pelaporanui() {
