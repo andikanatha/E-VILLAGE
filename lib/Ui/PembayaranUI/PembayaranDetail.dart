@@ -1,10 +1,12 @@
 import 'package:e_villlage/Data/Formated/dayformated.dart';
 import 'package:e_villlage/Data/Model/ApiResponse.dart';
-import 'package:e_villlage/Data/Model/PembayaranModel.dart';
+import 'package:e_villlage/Data/Model/PembayaranDetailModel.dart';
+import 'package:e_villlage/Data/Model/PembayaranModelGet.dart';
 import 'package:e_villlage/Data/Services/pembayaran_services.dart';
 import 'package:e_villlage/Data/settings.dart';
 import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
+import 'package:e_villlage/Ui/Widget/ErrorWidget.dart';
 import 'package:e_villlage/Ui/Widget/Navbar.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
@@ -19,17 +21,28 @@ class Detailpembayaran extends StatefulWidget {
 
 class _DetailpembayaranState extends State<Detailpembayaran> {
   String action = "";
-  PembayaranModel? pembayaranModel;
+  DetailTrx? detailTrx;
   bool error = false;
   bool isload = true;
 
   void getdata() async {
     ApiResponse response = await getdetailtrx(id: widget.id.toString());
-    if (response.data != null) {
+    if (response.error == null) {
       setState(() {
         error = false;
+        detailTrx = response.data as DetailTrx;
+        if (detailTrx!.trx_name.toString() == "Pembayaran sampah") {
+          setState(() {
+            action = "Terima kasih telah membayar Sampah bulan ini...";
+          });
+        } else if (detailTrx!.trx_name.toString() == "Pembayaran PDAM") {
+          setState(() {
+            action = "Terima kasih telah membayar PDAM bulan ini...";
+          });
+        } else {
+          action = "Transfer saldo telah berhasil";
+        }
         isload = false;
-        pembayaranModel = response.data as PembayaranModel;
       });
     } else if (response.error == unauthroized) {
       Navigator.pushAndRemoveUntil(
@@ -40,7 +53,8 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
           (route) => false);
     } else {
       setState(() {
-        isload = false;
+        print(response.error);
+        // isload = false;
         error = true;
       });
     }
@@ -57,6 +71,7 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
   Widget build(BuildContext context) {
     return isload
         ? Container(
+            color: Colors.white,
             child: Center(
               child: CircularProgressIndicator(),
             ),
@@ -101,7 +116,7 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                                         fontSize: 18),
                                   ),
                                   Text(
-                                    "Terima kasih telah membayar ${action} bulan ini...",
+                                    action,
                                     style: TextStyle(
                                         color:
                                             Color.fromARGB(255, 196, 196, 196),
@@ -127,7 +142,29 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                               textAlign: TextAlign.left,
                             ),
                             Text(
-                              pembayaranModel!.transaction!.id.toString(),
+                              detailTrx!.id.toString(),
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.left,
+                            ),
+                            Divider(
+                              color: Colors.grey,
+                            )
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Jenis Pembayaran",
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 121, 121, 121),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.left,
+                            ),
+                            Text(
+                              detailTrx!.trx_name.toString(),
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
@@ -149,7 +186,7 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                               textAlign: TextAlign.left,
                             ),
                             Text(
-                              pembayaranModel!.transaction!.id.toString(),
+                              detailTrx!.nameuser.toString(),
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
@@ -172,8 +209,7 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                             ),
                             Text(
                               formatTglIndo(
-                                  date: pembayaranModel!.transaction!.trxDate
-                                      .toString()),
+                                  date: detailTrx!.trx_date.toString()),
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
@@ -196,8 +232,30 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                             ),
                             Text(
                               formatJamIndo(
-                                  date: pembayaranModel!.transaction!.trxDate
-                                      .toString()),
+                                  date: detailTrx!.trx_date.toString()),
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.left,
+                            ),
+                            Divider(
+                              color: Colors.grey,
+                            )
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Untuk Pembayaran Bulan apa?",
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 121, 121, 121),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.left,
+                            ),
+                            Text(
+                              formatBulanIndo(
+                                  date: detailTrx!.datefor.toString()),
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
@@ -219,8 +277,7 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                               textAlign: TextAlign.left,
                             ),
                             Text(
-                              pembayaranModel!.transaction!.description
-                                  .toString(),
+                              detailTrx!.description.toString(),
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
@@ -242,7 +299,7 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                               textAlign: TextAlign.left,
                             ),
                             Text(
-                              pembayaranModel!.transaction!.totalTrx.toString(),
+                              detailTrx!.total_trx.toString(),
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
@@ -257,11 +314,12 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                         ),
                         longbtn(
                             ontap: () {
-                              Navigator.push(
+                              Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => NavBotBar(),
-                                  ));
+                                  ),
+                                  (route) => false);
                             },
                             text: "Kembali ke home")
                       ],

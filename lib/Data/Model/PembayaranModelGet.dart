@@ -26,8 +26,9 @@ class DataTransaksi {
   int? id;
   String? idUser;
   String? trxName;
+  String? seconduser;
   String? trxDate;
-  Null? dateid;
+  String? datefor;
   String? status;
   String? totalTrx;
   String? description;
@@ -38,8 +39,9 @@ class DataTransaksi {
       {this.id,
       this.idUser,
       this.trxName,
+      this.seconduser,
       this.trxDate,
-      this.dateid,
+      this.datefor,
       this.status,
       this.totalTrx,
       this.description,
@@ -50,8 +52,9 @@ class DataTransaksi {
     id = json['id'];
     idUser = json['id_user'];
     trxName = json['trx_name'];
+    seconduser = json['seconduser'];
     trxDate = json['trx_date'];
-    dateid = json['dateid'];
+    datefor = json['datefor'];
     status = json['status'];
     totalTrx = json['total_trx'];
     description = json['description'];
@@ -64,8 +67,9 @@ class DataTransaksi {
     data['id'] = this.id;
     data['id_user'] = this.idUser;
     data['trx_name'] = this.trxName;
+    data['seconduser'] = this.seconduser;
     data['trx_date'] = this.trxDate;
-    data['dateid'] = this.dateid;
+    data['datefor'] = this.datefor;
     data['status'] = this.status;
     data['total_trx'] = this.totalTrx;
     data['description'] = this.description;
