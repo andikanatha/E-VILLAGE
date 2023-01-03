@@ -20,3 +20,14 @@ class Idrcvt {
     return currencyFormatter.format(count);
   }
 }
+
+class Idrcvt2 {
+  static String convertToIdr(
+      {required dynamic count, required int decimalDigit}) {
+    NumberFormat currencyFormatter = NumberFormat.currency(
+      locale: 'id',
+      decimalDigits: decimalDigit,
+    );
+    return currencyFormatter.format(count);
+  }
+}

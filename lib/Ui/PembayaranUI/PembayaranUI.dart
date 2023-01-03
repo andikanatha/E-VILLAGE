@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:e_villlage/Data/Formated/formated.dart';
 import 'package:e_villlage/Data/Model/ApiResponse.dart';
 import 'package:e_villlage/Data/Model/PembayaranModel.dart';
 import 'package:e_villlage/Data/Services/pembayaran_services.dart';
@@ -33,6 +34,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
   TextEditingController keterangan = TextEditingController();
   bool isload = false;
   String datefor = "";
+  int nominalint = 0;
   String pin = "5432";
 
   bool ispinerror = false;
@@ -83,7 +85,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
       datefor: datefor,
       keterangan: keterangan.text,
       name: widget.action.toString(),
-      transactiontotal: nominal.text,
+      transactiontotal: nominalint.toString(),
     );
 
     if (response.error == null) {
@@ -193,6 +195,11 @@ class _PembayaranUIState extends State<PembayaranUI> {
                             ),
                             Container(
                               child: TextFormField(
+                                  onChanged: (value) {
+                                    setState(() {
+                                      nominalint = int.parse(value);
+                                    });
+                                  },
                                   keyboardType: TextInputType.number,
                                   controller: nominal,
                                   validator: (val) => val!.isEmpty
@@ -216,6 +223,20 @@ class _PembayaranUIState extends State<PembayaranUI> {
                                         fontSize: 12,
                                       ),
                                       hintText: 'Nominal')),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "Masukkan hanya angka, jangan memasukan simbol lain",
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                                Text("!",
+                                    style: TextStyle(
+                                        fontSize: 10, color: Colors.red)),
+                              ],
                             ),
                             SizedBox(
                               height: 10,
@@ -251,73 +272,82 @@ class _PembayaranUIState extends State<PembayaranUI> {
                             longbtn(
                                 ontap: () {
                                   if (formkey.currentState!.validate()) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: Text("Masukkan Pin Anda"),
-                                          content: Form(
-                                              child: PinCodeTextField(
-                                            onCompleted: (value) {
-                                              if (value == pin) {
-                                                setState(() {
-                                                  isload = true;
-                                                });
-                                                Navigator.pop(context);
-                                                pembayaranpost();
-                                              } else {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return AlertDialog(
-                                                      title: Text(
-                                                          "Pin Tidak Sesuai!"),
-                                                      content: Text(
-                                                          "PIN yang anda masukkan tidak sesuai, mohon masukkan pin dengan benar!"),
-                                                      actions: [
-                                                        TextButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            child: Text("Oke")),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              }
-                                            },
-                                            keyboardType: TextInputType.number,
-                                            pinTheme: PinTheme(
-                                              fieldHeight: 50,
-                                              fieldWidth: 40,
-                                              activeFillColor: Colors.grey,
-                                            ),
-                                            length: 4,
-                                            appContext: context,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                ispinerror = false;
-                                                currentText = value;
-                                              });
-                                            },
-                                          )),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
+                                    if (nominalint > 500) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: Text("Masukkan Pin Anda"),
+                                            content: Form(
+                                                child: PinCodeTextField(
+                                              onCompleted: (value) {
+                                                if (value == pin) {
+                                                  setState(() {
+                                                    isload = true;
+                                                  });
+                                                  Navigator.pop(context);
+                                                  pembayaranpost();
+                                                } else {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return AlertDialog(
+                                                        title: Text(
+                                                            "Pin Tidak Sesuai!"),
+                                                        content: Text(
+                                                            "PIN yang anda masukkan tidak sesuai, mohon masukkan pin dengan benar!"),
+                                                        actions: [
+                                                          TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child:
+                                                                  Text("Oke")),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                }
                                               },
-                                              child: Text(
-                                                "Batal",
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              pinTheme: PinTheme(
+                                                fieldHeight: 50,
+                                                fieldWidth: 40,
+                                                activeFillColor: Colors.grey,
                                               ),
-                                            )
-                                          ],
-                                        );
-                                      },
-                                    );
+                                              length: 4,
+                                              appContext: context,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  ispinerror = false;
+                                                  currentText = value;
+                                                });
+                                              },
+                                            )),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  "Batal",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              )
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  'Mohon masukkan nominal dengan sesuai, minimal trx adalah Rp.500')));
+                                    }
                                   }
                                 },
                                 text: "Bayar")

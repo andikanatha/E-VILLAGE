@@ -129,6 +129,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 });
               })
             : Scaffold(
+                resizeToAvoidBottomInset: false,
                 appBar: defaultappbar(
                   title: "Akun",
                   btncek: ModalRoute.of(context)?.canPop ?? false,

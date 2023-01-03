@@ -67,6 +67,7 @@ class _UrunRembugPostUIState extends State<UrunRembugPostUI> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: defaultappbar(
         btncek: ModalRoute.of(context)?.canPop ?? false,
