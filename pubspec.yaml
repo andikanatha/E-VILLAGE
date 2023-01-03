@@ -27,6 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  barcode_scan2: ^4.2.2
   barcode_scanner: ^3.2.3
   cupertino_icons: ^1.0.2
   custom_radio_grouped_button: ^2.1.2+2
@@ -35,10 +36,14 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   flutter_svg: ^1.1.6
   google_fonts: ^3.0.1
+  grouped_list: ^5.1.2
   http: ^0.13.5
   image_picker: ^0.8.6
   inner_shadow_widget: ^0.0.3
-  intl: ^0.18.0
+  intl: null
+  month_year_picker: ^0.2.0+3
+  pin_code_fields: ^7.4.0
+  popover: ^0.2.6+3
   shared_preferences: ^2.0.15
   shared_preferences_android: ^2.0.14
 

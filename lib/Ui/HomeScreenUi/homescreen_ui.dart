@@ -3,10 +3,15 @@ import 'package:e_villlage/Data/Formated/formated.dart';
 import 'package:e_villlage/Data/Model/ApiResponse.dart';
 import 'package:e_villlage/Data/Model/UserModel.dart';
 import 'package:e_villlage/Data/Services/user_services.dart';
+import 'package:e_villlage/Data/settings.dart';
+import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
+import 'package:e_villlage/Ui/LaporKades/postLaporKadesUI.dart';
 import 'package:e_villlage/Ui/NotificationUi/notification_ui.dart';
+import 'package:e_villlage/Ui/PembayaranUI/PembayaranUI.dart';
 import 'package:e_villlage/Ui/RiwayatUi/riwayat_ui.dart';
-import 'package:e_villlage/Ui/SuggestionUi/suggestion_ui.dart';
+import 'package:e_villlage/Ui/SuggestionUi/Urunrembug_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
+import 'package:e_villlage/Ui/Widget/ErrorWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:inner_shadow_widget/inner_shadow_widget.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int hoursnow = 0;
   String greeting = "";
   String datenow = "0000-00-00";
+  String? token;
 
   getCurrentDate() {
     var date = DateTime.now();
@@ -62,18 +68,29 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isload = true;
 
   void getuser() async {
+    String token2 = await getUserrole();
     ApiResponse response = await getuserdetail();
     if (response.data != null) {
       setState(() {
+        token = token2;
         error = false;
 
         user = response.data as UserModel;
 
         isload = false;
       });
-    } else if (response.error != null) {
-      isload = false;
-      error = true;
+    } else if (response.error == unauthroized) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginScreen(),
+          ),
+          (route) => false);
+    } else {
+      setState(() {
+        isload = false;
+        error = true;
+      });
     }
   }
 
@@ -94,444 +111,489 @@ class _HomeScreenState extends State<HomeScreen> {
           ? Center(
               child: CircularProgressIndicator.adaptive(),
             )
-          : SafeArea(
-              child: Stack(
-                children: [
-                  Column(
+          : error
+              ? iserror(ontap: () {
+                  setState(() {
+                    isload = true;
+                    getuser();
+                  });
+                })
+              : SafeArea(
+                  child: Stack(
                     children: [
-                      Expanded(
-                          child: Container(
-                        color: Theme.of(context).colorScheme.primary,
-                      )),
-                      Expanded(child: Container())
-                    ],
-                  ),
-                  ListView(
-                    children: [
-                      Container(
-                        color: Theme.of(context).colorScheme.primary,
-                        padding: const EdgeInsets.only(
-                            left: 20, right: 20, top: 20, bottom: 20),
-                        child: Column(
-                          children: [
-                            Row(
+                      Column(
+                        children: [
+                          Expanded(
+                              child: Container(
+                            color: Theme.of(context).colorScheme.primary,
+                          )),
+                          Expanded(child: Container())
+                        ],
+                      ),
+                      ListView(
+                        children: [
+                          Container(
+                            color: Theme.of(context).colorScheme.primary,
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, top: 20, bottom: 20),
+                            child: Column(
                               children: [
-                                Expanded(
-                                  flex: 5,
-                                  child: Column(
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 5,
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                user!.username.toString() !=
+                                                        null
+                                                    ? user!.username.toString()
+                                                    : "Pengguna",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Colors.white),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                greeting,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                formatdayIndo(date: datenow) +
+                                                    ", " +
+                                                    formatTglIndo(
+                                                        date: datenow),
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                        child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                            padding: const EdgeInsets.all(5),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                              boxShadow: const [
+                                                BoxShadow(
+                                                  color: Color.fromARGB(
+                                                      18, 0, 0, 0),
+                                                  spreadRadius: 2,
+                                                  blurRadius: 7,
+                                                  offset: Offset(0,
+                                                      3), // changes position of shadow
+                                                ),
+                                              ],
+                                            ),
+                                            child: InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const NotificationScreen(),
+                                                      ));
+                                                },
+                                                child: Container(
+                                                    child: const Icon(
+                                                        Icons.notifications))))
+                                      ],
+                                    ))
+                                  ],
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20)),
+                                  margin: const EdgeInsets.only(top: 20),
+                                  child: Stack(
                                     children: [
                                       Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
                                         children: [
-                                          Text(
-                                            user!.username.toString() != null
-                                                ? "Hai, " +
-                                                    user!.username.toString()
-                                                : "Pengguna",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.white),
-                                          ),
+                                          Container(
+                                              height: 85,
+                                              child: Image.asset(
+                                                  "Asset/Image/asset-icon-saldo.png")),
                                         ],
                                       ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            greeting,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.white),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            formatdayIndo(date: datenow) +
-                                                ", " +
-                                                formatTglIndo(date: datenow),
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.white),
-                                          ),
-                                        ],
+                                      Container(
+                                        padding: const EdgeInsets.all(20),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height: 85,
+                                        child: Container(
+                                            width: 220,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Text(
+                                                        Idrcvt.convertToIdr(
+                                                            count: int.parse(
+                                                                user!.saldo),
+                                                            decimalDigit: 2),
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    left: 10,
+                                                                    right: 10),
+                                                            child: InkWell(
+                                                              onTap: () {},
+                                                              child: Container(
+                                                                width: 40,
+                                                                height: 40,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .primary,
+                                                                ),
+                                                                child: Center(
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .arrow_upward,
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          InkWell(
+                                                            onTap: () {},
+                                                            child: Container(
+                                                              width: 40,
+                                                              height: 40,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .colorScheme
+                                                                    .primary,
+                                                              ),
+                                                              child: Center(
+                                                                child: Icon(
+                                                                  Icons.add,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            )),
                                       ),
                                     ],
                                   ),
                                 ),
-                                Expanded(
-                                    child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Container(
-                                        padding: const EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                          boxShadow: const [
-                                            BoxShadow(
-                                              color:
-                                                  Color.fromARGB(18, 0, 0, 0),
-                                              spreadRadius: 2,
-                                              blurRadius: 7,
-                                              offset: Offset(0,
-                                                  3), // changes position of shadow
-                                            ),
-                                          ],
-                                        ),
-                                        child: InkWell(
-                                            onTap: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const NotificationScreen(),
-                                                  ));
-                                            },
-                                            child: Container(
-                                                child: const Icon(
-                                                    Icons.notifications))))
-                                  ],
-                                ))
-                              ],
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20)),
-                              margin: const EdgeInsets.only(top: 20),
-                              child: Stack(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
+                                Container(
+                                  margin: const EdgeInsets.only(top: 30),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Container(
-                                          height: 85,
-                                          child: Image.asset(
-                                              "Asset/Image/asset-icon-saldo.png")),
-                                    ],
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.all(20),
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 85,
-                                    child: Container(
-                                        width: 220,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    Idrcvt.convertToIdr(
-                                                        count: int.parse(
-                                                            user!.saldo),
-                                                        decimalDigit: 2),
-                                                    style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .primary,
-                                                    ),
+                                      Expanded(
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PembayaranUI(
+                                                          action: "sampah"),
+                                                ));
+                                          },
+                                          child: Column(
+                                            children: [
+                                              InnerShadow(
+                                                blur: 10,
+                                                color: Color.fromARGB(
+                                                    119, 255, 255, 255),
+                                                offset: const Offset(10, 8),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
                                                   ),
-                                                ),
-                                                Expanded(
-                                                  child: Row(
+                                                  height: 64,
+                                                  width: 64,
+                                                  child: Stack(
                                                     children: [
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            left: 10,
-                                                            right: 10),
-                                                        child: InkWell(
-                                                          onTap: () {},
-                                                          child: Container(
-                                                            width: 40,
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                            ),
-                                                            child: Center(
-                                                              child: Icon(
-                                                                Icons
-                                                                    .arrow_upward,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      InkWell(
-                                                        onTap: () {},
-                                                        child: Container(
-                                                          width: 40,
-                                                          height: 40,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .colorScheme
-                                                                .primary,
-                                                          ),
-                                                          child: Center(
-                                                            child: Icon(
-                                                              Icons.add,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
+                                                      Center(
+                                                        child: Icon(
+                                                          Icons.cached,
+                                                          color: Colors.white,
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                )
-                                              ],
-                                            ),
-                                          ],
-                                        )),
+                                                ),
+                                              ),
+                                              Container(
+                                                width: 70,
+                                                child: const Text(
+                                                  "Sampah",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.white,
+                                                      fontSize: 10),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PembayaranUI(
+                                                          action: "PDAM"),
+                                                ));
+                                          },
+                                          child: Column(
+                                            children: [
+                                              InnerShadow(
+                                                blur: 10,
+                                                color: Color.fromARGB(
+                                                    119, 255, 255, 255),
+                                                offset: const Offset(10, 8),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
+                                                  height: 64,
+                                                  width: 64,
+                                                  child: Stack(
+                                                    children: [
+                                                      Center(
+                                                        child: Icon(
+                                                          Icons.water,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                width: 70,
+                                                child: const Text(
+                                                  "Pdam",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.white,
+                                                      fontSize: 10),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SugestionScreen(),
+                                                ));
+                                          },
+                                          child: Column(
+                                            children: [
+                                              InnerShadow(
+                                                blur: 10,
+                                                color: Color.fromARGB(
+                                                    119, 255, 255, 255),
+                                                offset: const Offset(10, 8),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
+                                                  height: 64,
+                                                  width: 64,
+                                                  child: Stack(
+                                                    children: [
+                                                      Center(
+                                                        child: Icon(
+                                                          Icons.people,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                width: 70,
+                                                child: const Text(
+                                                  "Urun Rembug",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.white,
+                                                      fontSize: 10),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PostLaporKadesUI(),
+                                                ));
+                                          },
+                                          child: Column(
+                                            children: [
+                                              InnerShadow(
+                                                blur: 10,
+                                                color: Color.fromARGB(
+                                                    119, 255, 255, 255),
+                                                offset: const Offset(10, 8),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
+                                                  height: 64,
+                                                  width: 64,
+                                                  child: Stack(
+                                                    children: [
+                                                      Center(
+                                                        child: Icon(
+                                                          Icons.report,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                width: 70,
+                                                child: const Text(
+                                                  "Lapor Kades",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.white,
+                                                      fontSize: 10),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            Container(
-                              margin: const EdgeInsets.only(top: 30),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () {},
-                                      child: Column(
-                                        children: [
-                                          InnerShadow(
-                                            blur: 10,
-                                            color: Color.fromARGB(
-                                                119, 255, 255, 255),
-                                            offset: const Offset(10, 8),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              height: 64,
-                                              width: 64,
-                                              child: Stack(
-                                                children: [
-                                                  Center(
-                                                    child: Icon(
-                                                      Icons.cached,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 70,
-                                            child: const Text(
-                                              "Sampah",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white,
-                                                  fontSize: 10),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () {},
-                                      child: Column(
-                                        children: [
-                                          InnerShadow(
-                                            blur: 10,
-                                            color: Color.fromARGB(
-                                                119, 255, 255, 255),
-                                            offset: const Offset(10, 8),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              height: 64,
-                                              width: 64,
-                                              child: Stack(
-                                                children: [
-                                                  Center(
-                                                    child: Icon(
-                                                      Icons.water,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 70,
-                                            child: const Text(
-                                              "Pdam",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white,
-                                                  fontSize: 10),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SugestionScreen(),
-                                            ));
-                                      },
-                                      child: Column(
-                                        children: [
-                                          InnerShadow(
-                                            blur: 10,
-                                            color: Color.fromARGB(
-                                                119, 255, 255, 255),
-                                            offset: const Offset(10, 8),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              height: 64,
-                                              width: 64,
-                                              child: Stack(
-                                                children: [
-                                                  Center(
-                                                    child: Icon(
-                                                      Icons.people,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 70,
-                                            child: const Text(
-                                              "Urun Rembug",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white,
-                                                  fontSize: 10),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () {},
-                                      child: Column(
-                                        children: [
-                                          InnerShadow(
-                                            blur: 10,
-                                            color: Color.fromARGB(
-                                                119, 255, 255, 255),
-                                            offset: const Offset(10, 8),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              height: 64,
-                                              width: 64,
-                                              child: Stack(
-                                                children: [
-                                                  Center(
-                                                    child: Icon(
-                                                      Icons.report,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 70,
-                                            child: const Text(
-                                              "Lapor Kades",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white,
-                                                  fontSize: 10),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20)),
+                                color: Colors.white),
+                            child: Column(
+                              children: [activity(), highlight()],
                             ),
-                          ],
-                        ),
+                          )
+                        ],
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20)),
-                            color: Colors.white),
-                        child: Column(
-                          children: [activity(), highlight()],
-                        ),
-                      )
                     ],
                   ),
-                ],
-              ),
-            ),
+                ),
     );
   }
 

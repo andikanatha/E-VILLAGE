@@ -9,6 +9,7 @@ import 'package:e_villlage/Ui/GetStarted/Register_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/Navbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -94,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', userModel.token ?? '');
     await pref.setInt('userId', userModel.id ?? 0);
+    await pref.setString('role', userModel.akses ?? "");
     // ignore: use_build_context_synchronously
     Navigator.pushAndRemoveUntil(
         context,
@@ -140,14 +142,16 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             body: ListView(
               children: [
+                SizedBox(
+                  height: 50,
+                ),
                 Container(
-                  margin: EdgeInsets.only(top: 20),
                   width: double.infinity,
                   height: 150,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage("Asset/Image/amico.png"),
-                          fit: BoxFit.fitHeight)),
+                  child: SvgPicture.asset('Asset/Svg/LoginAssets.svg'),
+                ),
+                SizedBox(
+                  height: 50,
                 ),
                 Container(
                   margin: EdgeInsets.all(20),
@@ -240,7 +244,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       children: [
         Container(
-          margin: const EdgeInsets.only(top: 100),
           child: TextFormField(
               controller: email,
               validator: (val) =>

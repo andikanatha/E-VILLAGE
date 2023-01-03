@@ -87,6 +87,12 @@ Future<int> getUserid() async {
   return pref.getInt('userId') ?? 0;
 }
 
+//GetUserrole
+Future<String> getUserrole() async {
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  return pref.getString('role') ?? "";
+}
+
 //LOGOUT
 Future<bool> logout() async {
   SharedPreferences pref = await SharedPreferences.getInstance();
@@ -111,9 +117,6 @@ Future<ApiResponse> getuserdetail() async {
       case 401:
         apiresponse.error = unauthroized;
         break;
-      default:
-        apiresponse.error = somethingWentWrong;
-        break;
     }
   } catch (e) {
     apiresponse.error = serverError;
@@ -122,7 +125,9 @@ Future<ApiResponse> getuserdetail() async {
 }
 
 // Update Image User
-Future<ApiResponse> updateimg({required String? image_profile}) async {
+Future<ApiResponse> updateimg({
+  required String? image_profile,
+}) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     String token = await getToken();
@@ -131,8 +136,70 @@ Future<ApiResponse> updateimg({required String? image_profile}) async {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token'
     }, body: {
-      'image_user': image_profile
+      'image_user': image_profile,
     });
+
+    switch (response.statusCode) {
+      case 200:
+        apiResponse.data = jsonDecode(response.body)['message'];
+        break;
+      case 401:
+        apiResponse.error = unauthroized;
+        break;
+      default:
+        apiResponse.error = somethingWentWrong;
+        break;
+    }
+  } catch (e) {
+    apiResponse.error = serverError;
+  }
+  return apiResponse;
+}
+
+// Update Image User
+Future<ApiResponse> updateuser({required String? name}) async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    String token = await getToken();
+    final response = await http
+        .put(Uri.parse(baseurl_evillageapi + "/api/user/update"), headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token'
+    }, body: {
+      'name': name,
+    });
+
+    switch (response.statusCode) {
+      case 200:
+        apiResponse.data = jsonDecode(response.body)['message'];
+        break;
+      case 401:
+        apiResponse.error = unauthroized;
+        break;
+      default:
+        apiResponse.error = somethingWentWrong;
+        break;
+    }
+  } catch (e) {
+    apiResponse.error = serverError;
+  }
+  return apiResponse;
+}
+
+// Update Username
+Future<ApiResponse> updateusername({String? username}) async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    String token = await getToken();
+    final response = await http.put(
+        Uri.parse(baseurl_evillageapi + "/api/user/update/username"),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: {
+          'username': username
+        });
 
     switch (response.statusCode) {
       case 200:

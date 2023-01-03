@@ -4,10 +4,13 @@ import 'package:e_villlage/Data/Model/ApiResponse.dart';
 import 'package:e_villlage/Data/Services/user_services.dart';
 import 'package:e_villlage/Data/settings.dart';
 import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
+import 'package:e_villlage/Ui/OnBoardingScreen/OnboardingUI.dart';
 import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/Navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:month_year_picker/month_year_picker.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,6 +28,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: themecolor,
       ),
       home: CheckLogin(),
+      localizationsDelegates: [
+        GlobalWidgetsLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        MonthYearPickerLocalizations.delegate,
+      ],
     );
   }
 }
@@ -39,17 +47,16 @@ class _CheckLoginState extends State<CheckLogin> {
     String token = await getToken();
     if (token == '') {
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => LoginScreen()),
+          MaterialPageRoute(builder: (context) => OnBoarding()),
           (route) => false);
     } else {
       ApiResponse response = await getuserdetail();
-      if (response.error == null) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => NavBotBar()),
+          (route) => false);
+      if (response.error == unauthroized) {
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => NavBotBar()),
-            (route) => false);
-      } else if (response.error == unauthroized) {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => LoginScreen()),
+            MaterialPageRoute(builder: (context) => OnBoarding()),
             (route) => false);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

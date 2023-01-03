@@ -9,6 +9,7 @@ import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/Navbar.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -129,21 +130,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             body: ListView(
               children: [
+                SizedBox(
+                  height: 30,
+                ),
                 Container(
-                  margin: EdgeInsets.only(top: 20),
                   width: double.infinity,
                   height: 150,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage("Asset/Image/amico.png"),
-                          fit: BoxFit.fitHeight)),
+                  child: SvgPicture.asset('Asset/Svg/LoginAssets.svg'),
+                ),
+                SizedBox(
+                  height: 30,
                 ),
                 Container(
                   margin: EdgeInsets.all(20),
                   child: Form(key: formkey, child: inputdesign()),
                 ),
                 Container(
-                  margin: EdgeInsets.only(left: 20, right: 20, top: 50),
+                  margin:
+                      EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
                   child: longbtn(
                       ontap: () {
                         if (formkey.currentState!.validate()) {
@@ -164,7 +168,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Column(
       children: [
         Container(
-          margin: EdgeInsets.only(top: 15),
           child: TextFormField(
               controller: username,
               validator: (val) =>

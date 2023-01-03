@@ -28,6 +28,7 @@ class Rembug {
   String? image;
   String? createdAt;
   String? updatedAt;
+  String? created_date;
   Users? users;
 
   Rembug(
@@ -36,6 +37,7 @@ class Rembug {
       this.deskripsi,
       this.image,
       this.createdAt,
+      this.created_date,
       this.updatedAt,
       this.users});
 
@@ -45,6 +47,7 @@ class Rembug {
     deskripsi = json['deskripsi'];
     image = json['image'];
     createdAt = json['created_at'];
+    created_date = json['created_date'];
     updatedAt = json['updated_at'];
     users = json['users'] != null ? new Users.fromJson(json['users']) : null;
   }
@@ -56,6 +59,7 @@ class Rembug {
     data['deskripsi'] = this.deskripsi;
     data['image'] = this.image;
     data['created_at'] = this.createdAt;
+    data['created_date'] = this.created_date;
     data['updated_at'] = this.updatedAt;
     if (this.users != null) {
       data['users'] = this.users!.toJson();
@@ -67,13 +71,15 @@ class Rembug {
 class Users {
   int? id;
   String? name;
+  String? username;
   String? imageUser;
 
-  Users({this.id, this.name, this.imageUser});
+  Users({this.id, this.name, this.username, this.imageUser});
 
   Users.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
+    username = json['username'];
     imageUser = json['image_user'];
   }
 
@@ -81,6 +87,7 @@ class Users {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
+    data['username'] = this.username;
     data['image_user'] = this.imageUser;
     return data;
   }
