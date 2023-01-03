@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 Future<ApiResponse> pembayaran({
   required String name,
   required String keterangan,
+  required String datefor,
   required String transactiontotal,
 }) async {
   ApiResponse apiresponse = ApiResponse();
@@ -25,7 +26,8 @@ Future<ApiResponse> pembayaran({
           'trx_name': 'Pembayaran ' + name,
           'description': keterangan,
           'total_trx': transactiontotal,
-          'created_at': DateTime.now().toString()
+          'trx_date': DateTime.now().toString(),
+          'datefor': datefor
         });
 
     switch (response.statusCode) {
@@ -38,6 +40,32 @@ Future<ApiResponse> pembayaran({
 
       default:
         apiresponse.error = somethingWentWrong;
+        break;
+    }
+  } catch (e) {
+    apiresponse.error = serverError;
+  }
+  return apiresponse;
+}
+
+//userdetail
+Future<ApiResponse> getdetailtrx({required String id}) async {
+  ApiResponse apiresponse = ApiResponse();
+  try {
+    String token = await getToken();
+    final response = await http.get(
+        Uri.parse(baseurl_evillageapi + "/transaksi/detail/" + id),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+
+    switch (response.statusCode) {
+      case 200:
+        apiresponse.data = PembayaranModel.fromJson(jsonDecode(response.body));
+        break;
+      case 401:
+        apiresponse.error = unauthroized;
         break;
     }
   } catch (e) {

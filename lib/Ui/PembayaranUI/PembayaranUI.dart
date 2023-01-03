@@ -9,6 +9,7 @@ import 'package:e_villlage/Data/settings.dart';
 import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/Navbar.dart';
+import 'package:e_villlage/Data/Formated/dayformated.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,6 +32,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
   TextEditingController nominal = TextEditingController();
   TextEditingController keterangan = TextEditingController();
   bool isload = false;
+  String datefor = "";
   String pin = "5432";
 
   bool ispinerror = false;
@@ -78,6 +80,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
 
   void pembayaranpost() async {
     ApiResponse response = await pembayaran(
+      datefor: datefor,
       keterangan: keterangan.text,
       name: widget.action.toString(),
       transactiontotal: nominal.text,
@@ -157,7 +160,9 @@ class _PembayaranUIState extends State<PembayaranUI> {
                                     );
                                     if (selectedmonth != null) {
                                       setState(() {
-                                        month.text = selectedmonth.toString();
+                                        month.text = formatBulanIndo(
+                                            date: selectedmonth.toString());
+                                        datefor = selectedmonth.toString();
                                       });
                                     }
                                   },
