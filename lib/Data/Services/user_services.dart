@@ -45,6 +45,7 @@ Future<ApiResponse> registerUser(
     {required String name,
     required String username,
     required String email,
+    required String pin,
     required String password}) async {
   ApiResponse apiresponse = ApiResponse();
   try {
@@ -56,6 +57,7 @@ Future<ApiResponse> registerUser(
       'name': name,
       'email': email,
       'password': password,
+      'pin': pin,
     });
 
     switch (response.statusCode) {
@@ -91,6 +93,12 @@ Future<int> getUserid() async {
 Future<String> getUserrole() async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   return pref.getString('role') ?? "";
+}
+
+//GetUserrole
+Future<String> getpin() async {
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  return pref.getString('pin') ?? "";
 }
 
 //LOGOUT
@@ -246,4 +254,72 @@ Future<ApiResponse> usertopup({required String? saldotopup}) async {
     apiResponse.error = serverError;
   }
   return apiResponse;
+}
+
+Future<ApiResponse> updatepassword({
+  required String password,
+  required String current,
+}) async {
+  ApiResponse apiresponse = ApiResponse();
+  try {
+    String token = await getToken();
+    final response = await http.put(
+        Uri.parse(baseurl_evillageapi + "/api/user/update/password"),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: {
+          'password': password,
+          'currentpw': current,
+        });
+
+    switch (response.statusCode) {
+      case 200:
+        apiresponse.data = jsonDecode(response.body)['message'];
+        break;
+      case 403:
+        apiresponse.error = jsonDecode(response.body)['message'];
+        break;
+
+      default:
+        apiresponse.error = somethingWentWrong;
+        break;
+    }
+  } catch (e) {
+    apiresponse.error = serverError;
+  }
+  return apiresponse;
+}
+
+Future<ApiResponse> updatepin({
+  required String pin,
+}) async {
+  ApiResponse apiresponse = ApiResponse();
+  try {
+    String token = await getToken();
+    final response = await http
+        .put(Uri.parse(baseurl_evillageapi + "/api/user/update/pin"), headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token'
+    }, body: {
+      'pin': pin,
+    });
+
+    switch (response.statusCode) {
+      case 200:
+        apiresponse.data = jsonDecode(response.body)['message'];
+        break;
+      case 403:
+        apiresponse.error = jsonDecode(response.body)['message'];
+        break;
+
+      default:
+        apiresponse.error = somethingWentWrong;
+        break;
+    }
+  } catch (e) {
+    apiresponse.error = serverError;
+  }
+  return apiresponse;
 }

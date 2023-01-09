@@ -10,6 +10,7 @@ import 'package:e_villlage/Data/settings.dart';
 import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/ErrorWidget.dart';
+import 'package:e_villlage/Ui/Widget/LoadWidget.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
@@ -115,12 +116,7 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return isload
-        ? Container(
-            color: Theme.of(context).colorScheme.primary,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
+        ? isloadingwidget()
         : error
             ? iserror(ontap: () {
                 setState(() {
@@ -138,7 +134,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   },
                   backgroundcolor: Theme.of(context).colorScheme.primary,
                 ),
-                backgroundColor: Theme.of(context).colorScheme.primary,
+                backgroundColor: secondarycolor,
                 body: Container(
                   decoration: BoxDecoration(
                       color: primarycolor,
@@ -199,14 +195,14 @@ class _AccountScreenState extends State<AccountScreen> {
                                                       BorderRadius.circular(
                                                           100),
                                                   color: Color.fromARGB(
-                                                      255, 218, 236, 242)),
+                                                      255, 75, 197, 241)),
                                               child: IconButton(
                                                   onPressed: () {
                                                     getImage();
                                                   },
                                                   icon: Icon(
                                                     Icons.edit,
-                                                    color: secondarycolorhigh,
+                                                    color: Colors.white,
                                                   )),
                                             ),
                                           )
@@ -236,6 +232,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                           height: 5,
                                         ),
                                         TextFormField(
+                                            style:
+                                                TextStyle(color: surfacecolor),
                                             controller: username,
                                             validator: (val) => val!.isEmpty
                                                 ? 'Mohon isi nama pengguna anda!'
@@ -272,6 +270,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                           height: 5,
                                         ),
                                         TextFormField(
+                                            style:
+                                                TextStyle(color: surfacecolor),
                                             controller: name,
                                             validator: (val) => val!.isEmpty
                                                 ? 'Mohon isi nama lengkap anda!'

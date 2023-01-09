@@ -3,22 +3,23 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-final TextStyle appbartitlestyle = GoogleFonts.poppins(
+TextStyle appbartitlestyle = GoogleFonts.poppins(
     color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16);
 
-final Color accentcolor = Color.fromARGB(255, 11, 128, 171);
+Color accentcolor = Color.fromARGB(255, 130, 222, 255);
 // ignore: prefer_const_declarations
-final Color primarycolor = Colors.white;
+Color primarycolor = Colors.white;
+Color boxcolor = Colors.white;
 
 // ignore: prefer_const_declarations
-final Color surfacecolor = Colors.black;
+Color surfacecolor = Colors.black;
 // ignore: prefer_const_declarations
-final Color secondarycolor = const Color.fromARGB(255, 48, 167, 207);
-final Color secondarycolorhigh = Color.fromARGB(255, 130, 222, 255);
-final Color inputtxtbg = Color.fromARGB(255, 218, 236, 242);
-final Color defaultbgimg = Color.fromARGB(255, 217, 217, 217);
+Color secondarycolor = const Color.fromARGB(255, 48, 167, 207);
+Color secondarycolorhigh = Color.fromARGB(255, 130, 222, 255);
+Color inputtxtbg = Color.fromARGB(255, 218, 236, 242);
+Color defaultbgimg = Color.fromARGB(255, 217, 217, 217);
 
-final MaterialColor themecolor = MaterialColor(
+MaterialColor themecolor = MaterialColor(
   const Color.fromARGB(255, 75, 197, 241).value,
   const <int, Color>{
     50: Color.fromRGBO(75, 197, 241, 0.1),

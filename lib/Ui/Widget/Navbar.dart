@@ -1,5 +1,8 @@
 import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:e_villlage/Data/settings.dart';
+import 'package:e_villlage/Icons/navbar_icons_icons.dart';
 import 'package:e_villlage/Ui/HomeScreenUi/homescreen_ui.dart';
+import 'package:e_villlage/Ui/PembayaranUI/PembayaranUI.dart';
 import 'package:e_villlage/Ui/ProfileScreenUi/profile_ui.dart';
 import 'package:e_villlage/Ui/RiwayatUi/riwayat_ui.dart';
 import 'package:e_villlage/Ui/SuggestionUi/Urunrembug_ui.dart';
@@ -16,7 +19,65 @@ class NavBotBar extends StatefulWidget {
 
 class _NavBotBarState extends State<NavBotBar> {
   ScanResult? scanResult;
-  String qr = "3268";
+  int _index = 0;
+
+  void _showModalSheet(int i) {
+    showModalBottomSheet(
+        backgroundColor: primarycolor,
+        context: context,
+        builder: (builder) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            height: 170,
+            child: Column(
+              children: [
+                ListTile(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PembayaranUI(action: "sampah"),
+                        ));
+                  },
+                  leading: Icon(
+                    Icons.recycling,
+                    color: accentcolor,
+                  ),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    color: accentcolor,
+                  ),
+                  title: Text(
+                    "Pembayaran Sampah",
+                    style: TextStyle(color: surfacecolor),
+                  ),
+                ),
+                ListTile(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PembayaranUI(action: "PDAM"),
+                        ));
+                  },
+                  leading: Icon(
+                    Icons.water,
+                    color: accentcolor,
+                  ),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    color: accentcolor,
+                  ),
+                  title: Text(
+                    "Pembayaran PDAM",
+                    style: TextStyle(color: surfacecolor),
+                  ),
+                )
+              ],
+            ),
+          );
+        });
+  }
 
   Future<void> _scan() async {
     try {
@@ -50,19 +111,9 @@ class _NavBotBarState extends State<NavBotBar> {
     }
 
     if (scanResult != null) {
-      if (scanResult!.rawContent == qr) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return Container(
-              child: Column(
-                children: [
-                  Text(scanResult!.rawContent),
-                ],
-              ),
-            );
-          },
-        );
+      if (scanResult!.rawContent == baseurl_evillageapi.toString()) {
+        _index = _index + 1;
+        _showModalSheet(_index);
       } else if (scanResult!.rawContent == "") {
       } else {
         showDialog(
@@ -116,33 +167,34 @@ class _NavBotBarState extends State<NavBotBar> {
       body: screen[_screenindex],
       floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).colorScheme.primary,
-          child: Icon(Icons.card_giftcard),
+          child: Icon(
+            NavbarIcons.scan,
+            color: Colors.white,
+          ),
           onPressed: () {
             _scan();
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
-        notchMargin: 5,
-        clipBehavior: Clip.antiAlias,
         child: BottomNavigationBar(
           backgroundColor: primarycolor,
           type: BottomNavigationBarType.fixed,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: Icon(NavbarIcons.home),
               label: "Beranda",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.help),
+              icon: Icon(NavbarIcons.people),
               label: "Saran",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.history),
+              icon: Icon(NavbarIcons.history),
               label: "Riwayat",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle_sharp),
+              icon: Icon(NavbarIcons.profile),
               label: "Profile",
             ),
           ],

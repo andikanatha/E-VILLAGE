@@ -1,8 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:e_villlage/Data/LocalSettings.dart';
 import 'package:e_villlage/Data/Model/ApiResponse.dart';
 import 'package:e_villlage/Data/Services/user_services.dart';
 import 'package:e_villlage/Data/settings.dart';
+import 'package:e_villlage/Ui/Admin/HomescreenAdminUI.dart';
 import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
 import 'package:e_villlage/Ui/OnBoardingScreen/OnboardingUI.dart';
 import 'package:e_villlage/Ui/Theme.dart';
@@ -44,24 +46,52 @@ class CheckLogin extends StatefulWidget {
 
 class _CheckLoginState extends State<CheckLogin> {
   void _loadUserInfo() async {
+    bool theme = await getisDarkTheme();
+    if (theme == true) {
+      primarycolor = Color.fromARGB(255, 33, 73, 98);
+      accentcolor = Colors.white;
+      secondarycolor = Color.fromARGB(255, 22, 53, 72);
+      boxcolor = Color.fromARGB(255, 65, 103, 126);
+      surfacecolor = Colors.white;
+      inputtxtbg = Color.fromARGB(255, 65, 103, 126);
+    }
     String token = await getToken();
+    String role = await getUserrole();
     if (token == '') {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => OnBoarding()),
           (route) => false);
     } else {
-      ApiResponse response = await getuserdetail();
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => NavBotBar()),
-          (route) => false);
-      if (response.error == unauthroized) {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => OnBoarding()),
-            (route) => false);
+      if (role == "admin") {
+        ApiResponse response = await getuserdetail();
+        if (response.data != null) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => HomeScreenAdmin()),
+              (route) => false);
+        } else if (response.error == unauthroized) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => OnBoarding()),
+              (route) => false);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('${response.error}'),
+          ));
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('${response.error}'),
-        ));
+        ApiResponse response = await getuserdetail();
+        if (response.data != null) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => NavBotBar()),
+              (route) => false);
+        } else if (response.error == unauthroized) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => OnBoarding()),
+              (route) => false);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('${response.error}'),
+          ));
+        }
       }
     }
   }

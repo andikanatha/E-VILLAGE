@@ -9,6 +9,7 @@ import 'package:e_villlage/Data/Services/user_services.dart';
 import 'package:e_villlage/Data/settings.dart';
 import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
+import 'package:e_villlage/Ui/Widget/LoadWidget.dart';
 import 'package:e_villlage/Ui/Widget/Navbar.dart';
 import 'package:e_villlage/Data/Formated/dayformated.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
@@ -27,15 +28,30 @@ class PembayaranUI extends StatefulWidget {
 }
 
 class _PembayaranUIState extends State<PembayaranUI> {
+  //FINGERR
+
+  bool avaliablefinger = false;
+  bool isauthen = false;
+
+  //FINGERR
+
+  void get() async {
+    String getpinvar = await getpin();
+    setState(() {
+      pin = getpinvar;
+    });
+  }
+
   String currentText = "";
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController month = TextEditingController();
   TextEditingController nominal = TextEditingController();
   TextEditingController keterangan = TextEditingController();
   bool isload = false;
+
   String datefor = "";
   int nominalint = 0;
-  String pin = "5432";
+  String pin = "";
 
   bool ispinerror = false;
 
@@ -107,6 +123,8 @@ class _PembayaranUIState extends State<PembayaranUI> {
 
   @override
   void initState() {
+    get();
+
     // TODO: implement initState
     super.initState();
   }
@@ -114,12 +132,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
   @override
   Widget build(BuildContext context) {
     return isload
-        ? Container(
-            color: Colors.white,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
+        ? isloadingwidget()
         : Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: defaultappbar(
@@ -130,7 +143,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
               },
               backgroundcolor: Theme.of(context).colorScheme.primary,
             ),
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: secondarycolor,
             body: Container(
               decoration: BoxDecoration(
                   color: primarycolor,
@@ -281,7 +294,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
                                             content: Form(
                                                 child: PinCodeTextField(
                                               onCompleted: (value) {
-                                                if (value == pin) {
+                                                if (value.toString() == pin) {
                                                   setState(() {
                                                     isload = true;
                                                   });

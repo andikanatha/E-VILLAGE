@@ -3,10 +3,13 @@ import 'package:e_villlage/Data/Model/ApiResponse.dart';
 import 'package:e_villlage/Data/Model/PembayaranDetailModel.dart';
 import 'package:e_villlage/Data/Model/PembayaranModelGet.dart';
 import 'package:e_villlage/Data/Services/pembayaran_services.dart';
+import 'package:e_villlage/Data/Services/user_services.dart';
 import 'package:e_villlage/Data/settings.dart';
+import 'package:e_villlage/Ui/Admin/HomescreenAdminUI.dart';
 import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/ErrorWidget.dart';
+import 'package:e_villlage/Ui/Widget/LoadWidget.dart';
 import 'package:e_villlage/Ui/Widget/Navbar.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
@@ -21,26 +24,33 @@ class Detailpembayaran extends StatefulWidget {
 
 class _DetailpembayaranState extends State<Detailpembayaran> {
   String action = "";
+  String role = "";
   DetailTrx? detailTrx;
   bool error = false;
   bool isload = true;
 
   void getdata() async {
+    String akses = await getUserrole();
     ApiResponse response = await getdetailtrx(id: widget.id.toString());
     if (response.error == null) {
       setState(() {
+        role = akses;
         error = false;
         detailTrx = response.data as DetailTrx;
-        if (detailTrx!.trx_name.toString() == "Pembayaran sampah") {
+        if (detailTrx!.trxName.toString() == "Pembayaran sampah") {
           setState(() {
-            action = "Terima kasih telah membayar Sampah bulan ini...";
+            action = "Pembayaran Sampah bulan " +
+                formatBulanIndo(date: detailTrx!.datefor.toString()) +
+                detailTrx!.status.toString();
           });
-        } else if (detailTrx!.trx_name.toString() == "Pembayaran PDAM") {
+        } else if (detailTrx!.trxName.toString() == "Pembayaran PDAM") {
           setState(() {
-            action = "Terima kasih telah membayar PDAM bulan ini...";
+            action = "Pembayaran PDAM bulan " +
+                formatBulanIndo(date: detailTrx!.datefor.toString()) +
+                detailTrx!.status.toString();
           });
         } else {
-          action = "Transfer saldo telah berhasil";
+          action = "transfer saldo " + detailTrx!.status.toString();
         }
         isload = false;
       });
@@ -70,23 +80,18 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
   @override
   Widget build(BuildContext context) {
     return isload
-        ? Container(
-            color: Colors.white,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
+        ? isloadingwidget()
         : Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: defaultappbar(
-              title: " Struk Pembayaran",
+              title: "Struk Pembayaran",
               btncek: ModalRoute.of(context)?.canPop ?? false,
               ontap: () {
                 Navigator.pop(context);
               },
               backgroundcolor: Theme.of(context).colorScheme.primary,
             ),
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: secondarycolor,
             body: Container(
               decoration: BoxDecoration(
                   color: primarycolor,
@@ -110,10 +115,12 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                               Column(
                                 children: [
                                   Text(
-                                    "Pembayaran Sukses!",
+                                    "Pembayaran " +
+                                        detailTrx!.status!.toString(),
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 18),
+                                        fontSize: 18,
+                                        color: surfacecolor),
                                   ),
                                   Text(
                                     action,
@@ -144,7 +151,9 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                             Text(
                               detailTrx!.id.toString(),
                               style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
+                                  color: surfacecolor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
                             ),
                             Divider(
@@ -164,9 +173,11 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                               textAlign: TextAlign.left,
                             ),
                             Text(
-                              detailTrx!.trx_name.toString(),
+                              detailTrx!.trxName.toString(),
                               style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
+                                  color: surfacecolor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
                             ),
                             Divider(
@@ -186,9 +197,11 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                               textAlign: TextAlign.left,
                             ),
                             Text(
-                              detailTrx!.nameuser.toString(),
+                              detailTrx!.users!.name.toString(),
                               style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
+                                  color: surfacecolor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
                             ),
                             Divider(
@@ -209,9 +222,11 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                             ),
                             Text(
                               formatTglIndo(
-                                  date: detailTrx!.trx_date.toString()),
+                                  date: detailTrx!.trxDate.toString()),
                               style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
+                                  color: surfacecolor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
                             ),
                             Divider(
@@ -232,9 +247,11 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                             ),
                             Text(
                               formatJamIndo(
-                                  date: detailTrx!.trx_date.toString()),
+                                  date: detailTrx!.trxDate.toString()),
                               style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
+                                  color: surfacecolor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
                             ),
                             Divider(
@@ -242,29 +259,34 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                             )
                           ],
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Untuk Pembayaran Bulan apa?",
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 121, 121, 121),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500),
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(
-                              formatBulanIndo(
-                                  date: detailTrx!.datefor.toString()),
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.left,
-                            ),
-                            Divider(
-                              color: Colors.grey,
-                            )
-                          ],
-                        ),
+                        detailTrx!.jenis.toString() == "pembayaran"
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Untuk Pembayaran Bulan",
+                                    style: TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 121, 121, 121),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  Text(
+                                    formatBulanIndo(
+                                        date: detailTrx!.datefor.toString()),
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: surfacecolor),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  Divider(
+                                    color: Colors.grey,
+                                  )
+                                ],
+                              )
+                            : SizedBox(),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -279,7 +301,9 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                             Text(
                               detailTrx!.description.toString(),
                               style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
+                                  color: surfacecolor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
                             ),
                             Divider(
@@ -299,9 +323,11 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                               textAlign: TextAlign.left,
                             ),
                             Text(
-                              detailTrx!.total_trx.toString(),
+                              detailTrx!.totalTrx.toString(),
                               style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
+                                  color: surfacecolor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
                             ),
                             Divider(
@@ -314,12 +340,21 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                         ),
                         longbtn(
                             ontap: () {
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => NavBotBar(),
-                                  ),
-                                  (route) => false);
+                              if (role == "admin") {
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HomeScreenAdmin(),
+                                    ),
+                                    (route) => false);
+                              } else {
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => NavBotBar(),
+                                    ),
+                                    (route) => false);
+                              }
                             },
                             text: "Kembali ke home")
                       ],

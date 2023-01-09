@@ -50,6 +50,46 @@ Future<ApiResponse> pembayaran({
   return apiresponse;
 }
 
+//Transfer
+Future<ApiResponse> transfer({
+  required String seconduser,
+  required String keterangan,
+  required String transactiontotal,
+}) async {
+  ApiResponse apiresponse = ApiResponse();
+  try {
+    String token = await getToken();
+    final response = await http.post(
+        Uri.parse(baseurl_evillageapi + "/api/user/transaksi/transfer"),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: {
+          'name_second_user': seconduser,
+          'description': keterangan,
+          'total_trx': transactiontotal,
+          'trx_date': DateTime.now().toString(),
+        });
+
+    switch (response.statusCode) {
+      case 200:
+        apiresponse.data = jsonDecode(response.body)['massage'];
+        break;
+      case 403:
+        apiresponse.error = jsonDecode(response.body)['message'];
+        break;
+
+      default:
+        apiresponse.error = somethingWentWrong;
+        break;
+    }
+  } catch (e) {
+    apiresponse.error = serverError;
+  }
+  return apiresponse;
+}
+
 //userdetail
 Future<ApiResponse> getdetailtrx({required String id}) async {
   ApiResponse apiresponse = ApiResponse();

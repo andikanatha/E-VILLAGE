@@ -5,8 +5,10 @@ import 'dart:ui';
 import 'package:e_villlage/Data/Model/ApiResponse.dart';
 import 'package:e_villlage/Data/Model/UserModel.dart';
 import 'package:e_villlage/Data/Services/user_services.dart';
+import 'package:e_villlage/Ui/Admin/HomescreenAdminUI.dart';
 import 'package:e_villlage/Ui/GetStarted/Register_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
+import 'package:e_villlage/Ui/Widget/LoadWidget.dart';
 import 'package:e_villlage/Ui/Widget/Navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -96,29 +98,35 @@ class _LoginScreenState extends State<LoginScreen> {
     await pref.setString('token', userModel.token ?? '');
     await pref.setInt('userId', userModel.id ?? 0);
     await pref.setString('role', userModel.akses ?? "");
+    await pref.setString('pin', userModel.pin ?? "");
     // ignore: use_build_context_synchronously
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NavBotBar(),
-        ),
-        (route) => false);
+
+    if (userModel.akses.toString() == "admin") {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreenAdmin(),
+          ),
+          (route) => false);
+    } else {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NavBotBar(),
+          ),
+          (route) => false);
+    }
   }
 
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
-  bool ishide = false;
+  bool ishide = true;
   bool load = false;
   @override
   Widget build(BuildContext context) {
     return load
-        ? Container(
-            color: primarycolor,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
+        ? isloadingwidget()
         : Scaffold(
             backgroundColor: primarycolor,
             appBar: AppBar(
@@ -245,6 +253,7 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Container(
           child: TextFormField(
+              style: TextStyle(color: surfacecolor),
               controller: email,
               validator: (val) =>
                   val!.isEmpty ? 'Mohon Masukkan Email Anda!' : null,
@@ -270,6 +279,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Container(
           margin: EdgeInsets.only(top: 15),
           child: TextFormField(
+              style: TextStyle(color: surfacecolor),
               controller: password,
               validator: (val) =>
                   val!.isEmpty ? 'Mohon Masukkan Password Anda!' : null,

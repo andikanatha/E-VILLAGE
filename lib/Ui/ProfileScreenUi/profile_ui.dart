@@ -6,9 +6,13 @@ import 'package:e_villlage/Data/Services/user_services.dart';
 import 'package:e_villlage/Data/settings.dart';
 import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
 import 'package:e_villlage/Ui/NotificationUi/notification_ui.dart';
+import 'package:e_villlage/Ui/ProfileScreenUi/FaqUI.dart';
 import 'package:e_villlage/Ui/ProfileScreenUi/akunscreen_ui.dart';
+import 'package:e_villlage/Ui/Settings/PengaturanUI.dart';
+import 'package:e_villlage/Ui/SuggestionUi/kelolaurunrembug_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/ErrorWidget.dart';
+import 'package:e_villlage/Ui/Widget/LoadWidget.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -57,9 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: primarycolor,
       body: isload
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? isloadingwidget()
           : error
               ? iserror(ontap: () {
                   setState(() {
@@ -71,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: ListView(
                   children: [
                     Container(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: secondarycolor,
                       child: Container(
                         padding: EdgeInsets.only(bottom: 20),
                         margin: const EdgeInsets.only(top: 30),
@@ -101,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     child: Container(
                                         padding: const EdgeInsets.all(5),
                                         decoration: BoxDecoration(
-                                          color: Colors.white,
+                                          color: primarycolor,
                                           borderRadius:
                                               BorderRadius.circular(100),
                                           boxShadow: const [
@@ -125,8 +127,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   ));
                                             },
                                             child: Container(
-                                                child: const Icon(
-                                                    Icons.notifications)))),
+                                                child: Icon(
+                                              Icons.notifications,
+                                              color: secondarycolorhigh,
+                                            )))),
                                   )
                                 ],
                               ),
@@ -178,7 +182,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Container(
                           height: 200,
-                          color: Theme.of(context).colorScheme.primary,
+                          color: secondarycolor,
                         ),
                         Container(
                           decoration: BoxDecoration(
@@ -188,14 +192,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             color: primarycolor,
                           ),
                           child: Container(
-                            margin: EdgeInsets.all(25),
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 25, vertical: 3),
                             child: Column(
                               children: [
                                 Container(
                                   margin: EdgeInsets.only(top: 20),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: primarycolor,
+                                    color: boxcolor,
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Color.fromARGB(37, 0, 0, 0),
@@ -222,11 +227,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     },
                                     trailing: Icon(
                                       Icons.arrow_forward_ios_rounded,
-                                      color: secondarycolor,
+                                      color: accentcolor,
                                     ),
                                     leading: Icon(
                                       Icons.people,
-                                      color: secondarycolor,
+                                      color: accentcolor,
                                     ),
                                     title: Text(
                                       "Akun",
@@ -240,7 +245,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   margin: EdgeInsets.only(top: 20),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: primarycolor,
+                                    color: boxcolor,
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Color.fromARGB(37, 0, 0, 0),
@@ -252,13 +257,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ],
                                   ),
                                   child: ListTile(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                PengaturanUI(),
+                                          ));
+                                    },
                                     trailing: Icon(
                                       Icons.arrow_forward_ios_rounded,
-                                      color: secondarycolor,
+                                      color: accentcolor,
                                     ),
                                     leading: Icon(
                                       Icons.settings,
-                                      color: secondarycolor,
+                                      color: accentcolor,
                                     ),
                                     title: Text(
                                       "Pengaturan",
@@ -272,7 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   margin: EdgeInsets.only(top: 20),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: primarycolor,
+                                    color: boxcolor,
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Color.fromARGB(37, 0, 0, 0),
@@ -284,13 +297,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ],
                                   ),
                                   child: ListTile(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                FAQBANTUANUI(),
+                                          ));
+                                    },
                                     trailing: Icon(
                                       Icons.arrow_forward_ios_rounded,
-                                      color: secondarycolor,
+                                      color: accentcolor,
                                     ),
                                     leading: Icon(
                                       Icons.help,
-                                      color: secondarycolor,
+                                      color: accentcolor,
                                     ),
                                     title: Text(
                                       "FAQ dan bantuan",
@@ -304,7 +325,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   margin: EdgeInsets.only(top: 20),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: primarycolor,
+                                    color: boxcolor,
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Color.fromARGB(37, 0, 0, 0),
@@ -316,13 +337,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ],
                                   ),
                                   child: ListTile(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                KelolaUrunRembug(),
+                                          ));
+                                    },
                                     trailing: Icon(
                                       Icons.arrow_forward_ios_rounded,
-                                      color: secondarycolor,
+                                      color: accentcolor,
                                     ),
                                     leading: Icon(
-                                      Icons.help,
-                                      color: secondarycolor,
+                                      Icons.warning,
+                                      color: accentcolor,
                                     ),
                                     title: Text(
                                       "Kelola urun rembug",
@@ -336,7 +365,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   margin: EdgeInsets.only(top: 20),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: primarycolor,
+                                    color: boxcolor,
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Color.fromARGB(37, 0, 0, 0),

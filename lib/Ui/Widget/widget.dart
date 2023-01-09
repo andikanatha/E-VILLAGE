@@ -9,14 +9,14 @@ PreferredSizeWidget defaultappbar(
     required Color backgroundcolor,
     required bool btncek}) {
   return AppBar(
-    backgroundColor: backgroundcolor,
+    backgroundColor: secondarycolor,
     elevation: 0,
     centerTitle: true,
     title: Text(
       title,
       style: appbartitlestyle,
     ),
-    leading: btncek == true
+    leading: btncek
         ? IconButton(
             onPressed: ontap,
             icon: Icon(
@@ -39,7 +39,7 @@ Widget longbtn({
         onPressed: ontap,
         child: Text(
           text,
-          style: TextStyle(color: primarycolor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         style: ElevatedButton.styleFrom(
             shape:

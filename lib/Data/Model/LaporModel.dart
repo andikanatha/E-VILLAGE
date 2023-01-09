@@ -27,7 +27,7 @@ class DataTransaksi {
   String? idUser;
   String? createdAt;
   String? updatedAt;
-  Null? image;
+  String? image;
   String? deskripsi;
   String? tempatKejadian;
   String? createdDate;

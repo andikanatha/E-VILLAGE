@@ -4,13 +4,16 @@ import 'package:e_villlage/Data/Model/ApiResponse.dart';
 import 'package:e_villlage/Data/Model/UserModel.dart';
 import 'package:e_villlage/Data/Services/user_services.dart';
 import 'package:e_villlage/Data/settings.dart';
+import 'package:e_villlage/Ui/Admin/HomescreenAdminUI.dart';
 import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
+import 'package:e_villlage/Ui/Widget/LoadWidget.dart';
 import 'package:e_villlage/Ui/Widget/Navbar.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -21,10 +24,12 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  String pin = "0000";
   void _registeruser() async {
     ApiResponse response = await registerUser(
         username: username.text,
         name: name.text,
+        pin: pin,
         email: email.text,
         password: password.text);
     if (response.data != null) {
@@ -81,13 +86,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', userModel.token ?? '');
     await pref.setInt('userId', userModel.id ?? 0);
+    await pref.setString('pin', userModel.pin ?? "");
+
     // ignore: use_build_context_synchronously
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NavBotBar(),
-        ),
-        (route) => false);
+    if (userModel.akses.toString() == "admin") {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreenAdmin(),
+          ),
+          (route) => false);
+    } else {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NavBotBar(),
+          ),
+          (route) => false);
+    }
   }
 
   TextEditingController username = TextEditingController();
@@ -96,18 +112,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController password = TextEditingController();
   TextEditingController passwordconfrimation = TextEditingController();
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
-  bool ishide = false;
-  bool ishideconfirm = false;
+  bool ishide = true;
+  bool ishideconfirm = true;
   bool load = false;
   @override
   Widget build(BuildContext context) {
     return load
-        ? Container(
-            color: primarycolor,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
+        ? isloadingwidget()
         : Scaffold(
             backgroundColor: primarycolor,
             appBar: AppBar(
@@ -151,10 +162,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: longbtn(
                       ontap: () {
                         if (formkey.currentState!.validate()) {
-                          setState(() {
-                            load = true;
-                          });
-                          _registeruser();
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text("Buat Pin Anda"),
+                                content: Form(
+                                    child: PinCodeTextField(
+                                  onCompleted: (value) {
+                                    setState(() {
+                                      pin = value;
+                                      load = true;
+                                    });
+                                    _registeruser();
+                                    Navigator.pop(context);
+                                  },
+                                  keyboardType: TextInputType.number,
+                                  pinTheme: PinTheme(
+                                    fieldHeight: 50,
+                                    fieldWidth: 40,
+                                    activeFillColor: Colors.grey,
+                                  ),
+                                  length: 4,
+                                  appContext: context,
+                                  onChanged: (value) {
+                                    setState(() {});
+                                  },
+                                )),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(
+                                      "Batal",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+                          );
                         }
                       },
                       text: "Daftar"),
@@ -169,9 +218,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       children: [
         Container(
           child: TextFormField(
+              style: TextStyle(color: surfacecolor),
               controller: username,
               validator: (val) =>
-                  val!.isEmpty ? 'Mohon Masukkan Nama Anda!' : null,
+                  val!.isEmpty ? 'Mohon Masukkan Username Anda!' : null,
               decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -189,11 +239,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Icons.people,
                     color: surfacecolor,
                   ),
-                  hintText: 'masukkan nama anda')),
+                  hintText: 'masukkan username anda')),
         ),
         Container(
           margin: EdgeInsets.only(top: 15),
           child: TextFormField(
+              style: TextStyle(color: surfacecolor),
               controller: name,
               validator: (val) =>
                   val!.isEmpty ? 'Mohon Masukkan Nama Lengkap Anda!' : null,
@@ -219,6 +270,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Container(
           margin: EdgeInsets.only(top: 15),
           child: TextFormField(
+              style: TextStyle(color: surfacecolor),
               keyboardType: TextInputType.emailAddress,
               controller: email,
               validator: (val) =>
@@ -245,6 +297,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Container(
           margin: EdgeInsets.only(top: 15),
           child: TextFormField(
+              style: TextStyle(color: surfacecolor),
               obscureText: ishide ? true : false,
               controller: password,
               validator: (val) => val!.length < 6
@@ -282,6 +335,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Container(
           margin: EdgeInsets.only(top: 15),
           child: TextFormField(
+              style: TextStyle(color: surfacecolor),
               obscureText: ishideconfirm ? true : false,
               controller: passwordconfrimation,
               validator: (val) => val != password.text

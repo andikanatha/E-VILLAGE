@@ -13,6 +13,7 @@ class UserModel {
   String? akses;
   dynamic saldo;
   String? token;
+  String? pin;
 
   UserModel(
       {this.id,
@@ -22,6 +23,7 @@ class UserModel {
       this.email,
       this.akses,
       this.saldo,
+      this.pin,
       this.token});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class UserModel {
         username: json['user']['username'],
         email: json['user']['email'],
         akses: json['user']['akses'],
+        pin: json['user']['pin'],
         saldo: json['user']['saldo'],
 
         //TOKEN

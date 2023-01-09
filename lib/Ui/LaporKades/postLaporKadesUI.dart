@@ -7,6 +7,7 @@ import 'package:e_villlage/Data/Services/user_services.dart';
 import 'package:e_villlage/Data/settings.dart';
 import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
+import 'package:e_villlage/Ui/Widget/LoadWidget.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -74,7 +75,7 @@ class _PostLaporKadesUIState extends State<PostLaporKadesUI> {
         },
         backgroundcolor: Theme.of(context).colorScheme.primary,
       ),
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: secondarycolor,
       body: Container(
         decoration: BoxDecoration(
             color: primarycolor,
@@ -84,12 +85,7 @@ class _PostLaporKadesUIState extends State<PostLaporKadesUI> {
           minHeight: MediaQuery.of(context).size.height,
         ),
         child: isload
-            ? Container(
-                color: Colors.white,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              )
+            ? isloadingwidget()
             : ListView(
                 children: [
                   Column(

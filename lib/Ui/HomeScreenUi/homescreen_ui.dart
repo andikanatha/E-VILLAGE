@@ -1,20 +1,34 @@
+import 'dart:convert';
+
 import 'package:e_villlage/Data/Formated/dayformated.dart';
 import 'package:e_villlage/Data/Formated/formated.dart';
+import 'package:e_villlage/Data/LocalSettings.dart';
 import 'package:e_villlage/Data/Model/ApiResponse.dart';
+import 'package:e_villlage/Data/Model/PembayaranModelGet.dart';
+import 'package:e_villlage/Data/Model/RembugModel.dart';
 import 'package:e_villlage/Data/Model/UserModel.dart';
+import 'package:e_villlage/Data/Services/ReportRembug_services.dart';
+import 'package:e_villlage/Data/Services/rembug_services.dart';
 import 'package:e_villlage/Data/Services/user_services.dart';
 import 'package:e_villlage/Data/settings.dart';
+import 'package:e_villlage/Icons/feature_icons_icons.dart';
 import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
 import 'package:e_villlage/Ui/LaporKades/postLaporKadesUI.dart';
 import 'package:e_villlage/Ui/NotificationUi/notification_ui.dart';
+import 'package:e_villlage/Ui/PembayaranUI/KirimsaldoUI.dart';
+import 'package:e_villlage/Ui/PembayaranUI/ListtopupsaldoUI.dart';
+import 'package:e_villlage/Ui/PembayaranUI/PembayaranDetail.dart';
 import 'package:e_villlage/Ui/PembayaranUI/PembayaranUI.dart';
+import 'package:e_villlage/Ui/PembayaranUI/TopupSaldoUI.dart';
 import 'package:e_villlage/Ui/RiwayatUi/riwayat_ui.dart';
+import 'package:e_villlage/Ui/SuggestionUi/CommentRembugUI.dart';
 import 'package:e_villlage/Ui/SuggestionUi/Urunrembug_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/ErrorWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:inner_shadow_widget/inner_shadow_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -27,7 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
   int hoursnow = 0;
   String greeting = "";
   String datenow = "0000-00-00";
-  String? token;
+  bool isdark = false;
+
+  PembayaranModelGet? pembayaranModelGet;
 
   getCurrentDate() {
     var date = DateTime.now();
@@ -66,15 +82,70 @@ class _HomeScreenState extends State<HomeScreen> {
   UserModel? user;
   bool error = false;
   bool isload = true;
+  String? dateenow;
+  String? datenow2;
+  int daynow = 0;
 
+  TextEditingController deskripsitxt = TextEditingController();
+  void _postreport(
+      {required String? deskripsi,
+      String? id_post,
+      String? id_user_posts}) async {
+    ApiResponse response = await reportrembug(
+      deskripsi: deskripsi.toString(),
+      id_post: id_post.toString(),
+      id_user_posts: id_user_posts.toString(),
+    );
+
+    if (response.data != null) {
+      setState(() {
+        getuser();
+        deskripsitxt.text = "";
+      });
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.data}')));
+    } else if (response.error == unauthroized) {
+      logout().then((value) => {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+                (route) => false)
+          });
+    } else {
+      setState(() {
+        isload = false;
+      });
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.error}')));
+    }
+  }
+
+  RembugData? rembugData;
   void getuser() async {
-    String token2 = await getUserrole();
+    bool theme = await getisDarkTheme();
+    String token = await getToken();
+
+    DateTime dt = DateTime.parse(DateTime.now().toString());
+    String daynoww = DateFormat('dd').format(dt);
+    String datenoww = formatTglIndo(date: DateTime.now().toString());
+    String datenoww2 = formatBulanIndo(date: DateTime.now().toString());
+
+    final responsepembayaran = await http.get(
+        Uri.parse(baseurl_evillageapi + "/api/user/transaksi/all"),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    ApiResponse responserembug = await getallrembug();
     ApiResponse response = await getuserdetail();
     if (response.data != null) {
       setState(() {
-        token = token2;
+        dateenow = datenoww;
+        daynow = int.parse(daynoww);
+        datenow2 = datenoww2;
+        rembugData = responserembug.data as RembugData;
         error = false;
-
+        pembayaranModelGet = PembayaranModelGet.fromJson(
+            json.decode(responsepembayaran.body.toString()));
         user = response.data as UserModel;
 
         isload = false;
@@ -92,6 +163,10 @@ class _HomeScreenState extends State<HomeScreen> {
         error = true;
       });
     }
+
+    setState(() {
+      isdark = theme;
+    });
   }
 
   @override
@@ -125,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Expanded(
                               child: Container(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: secondarycolor,
                           )),
                           Expanded(child: Container())
                         ],
@@ -133,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ListView(
                         children: [
                           Container(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: secondarycolor,
                             padding: const EdgeInsets.only(
                                 left: 20, right: 20, top: 20, bottom: 20),
                             child: Column(
@@ -191,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         Container(
                                             padding: const EdgeInsets.all(5),
                                             decoration: BoxDecoration(
-                                              color: Colors.white,
+                                              color: primarycolor,
                                               borderRadius:
                                                   BorderRadius.circular(100),
                                               boxShadow: const [
@@ -215,15 +290,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ));
                                                 },
                                                 child: Container(
-                                                    child: const Icon(
-                                                        Icons.notifications))))
+                                                    child: Icon(
+                                                  Icons.notifications,
+                                                  color: secondarycolorhigh,
+                                                ))))
                                       ],
                                     ))
                                   ],
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: primarycolor,
                                       borderRadius: BorderRadius.circular(20)),
                                   margin: const EdgeInsets.only(top: 20),
                                   child: Stack(
@@ -252,20 +329,41 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 Row(
                                                   children: [
                                                     Expanded(
-                                                      child: Text(
-                                                        Idrcvt.convertToIdr(
-                                                            count: int.parse(
-                                                                user!.saldo),
-                                                            decimalDigit: 2),
-                                                        style: TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                        ),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            "Saldo anda",
+                                                            style: TextStyle(
+                                                              fontSize: 10,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: isdark
+                                                                  ? accentcolor
+                                                                  : Colors.grey,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            Idrcvt.convertToIdr(
+                                                                count: int
+                                                                    .parse(user!
+                                                                        .saldo),
+                                                                decimalDigit:
+                                                                    2),
+                                                            style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: isdark
+                                                                  ? accentcolor
+                                                                  : secondarycolor,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                     Expanded(
@@ -280,7 +378,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                     left: 10,
                                                                     right: 10),
                                                             child: InkWell(
-                                                              onTap: () {},
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              KirimSaldoUI(),
+                                                                    ));
+                                                              },
                                                               child: Container(
                                                                 width: 40,
                                                                 height: 40,
@@ -290,10 +396,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                       BorderRadius
                                                                           .circular(
                                                                               10),
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .colorScheme
-                                                                      .primary,
+                                                                  color:
+                                                                      secondarycolorhigh,
                                                                 ),
                                                                 child: Center(
                                                                   child: Icon(
@@ -307,7 +411,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             ),
                                                           ),
                                                           InkWell(
-                                                            onTap: () {},
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            Listtopup(),
+                                                                  ));
+                                                            },
                                                             child: Container(
                                                               width: 40,
                                                               height: 40,
@@ -317,10 +429,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                     BorderRadius
                                                                         .circular(
                                                                             10),
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .primary,
+                                                                color:
+                                                                    secondarycolorhigh,
                                                               ),
                                                               child: Center(
                                                                 child: Icon(
@@ -367,9 +477,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 offset: const Offset(10, 8),
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
+                                                    color: secondarycolor,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             20),
@@ -380,7 +488,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     children: [
                                                       Center(
                                                         child: Icon(
-                                                          Icons.cached,
+                                                          FeatureIcons.trash,
                                                           color: Colors.white,
                                                         ),
                                                       ),
@@ -424,9 +532,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 offset: const Offset(10, 8),
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
+                                                    color: secondarycolor,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             20),
@@ -437,7 +543,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     children: [
                                                       Center(
                                                         child: Icon(
-                                                          Icons.water,
+                                                          FeatureIcons.water,
                                                           color: Colors.white,
                                                         ),
                                                       ),
@@ -480,9 +586,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 offset: const Offset(10, 8),
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
+                                                    color: secondarycolor,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             20),
@@ -493,7 +597,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     children: [
                                                       Center(
                                                         child: Icon(
-                                                          Icons.people,
+                                                          FeatureIcons.people,
                                                           color: Colors.white,
                                                         ),
                                                       ),
@@ -536,9 +640,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 offset: const Offset(10, 8),
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
+                                                    color: secondarycolor,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             20),
@@ -549,7 +651,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     children: [
                                                       Center(
                                                         child: Icon(
-                                                          Icons.report,
+                                                          Icons.warning,
                                                           color: Colors.white,
                                                         ),
                                                       ),
@@ -584,7 +686,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(20),
                                     topRight: Radius.circular(20)),
-                                color: Colors.white),
+                                color: primarycolor),
                             child: Column(
                               children: [activity(), highlight()],
                             ),
@@ -608,10 +710,11 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Expanded(
                     child: Row(
-                  children: const [
+                  children: [
                     Text(
                       "Aktivitas",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: surfacecolor, fontWeight: FontWeight.bold),
                     ),
                   ],
                 )),
@@ -642,71 +745,90 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 80,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 5,
+              itemCount: pembayaranModelGet!.dataTransaksi!.length,
               itemBuilder: (context, index) {
-                return Container(
-                  height: 60,
-                  margin: const EdgeInsets.only(right: 20, top: 10, bottom: 10),
-                  decoration: BoxDecoration(
-                      color: primarycolor,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color.fromARGB(18, 0, 0, 0),
-                          spreadRadius: 2,
-                          blurRadius: 7,
-                          offset: Offset(0, 3), // changes position of shadow
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(15)),
-                  width: 231,
-                  child: Row(
-                    children: [
-                      Container(
-                          width: 10,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                bottomLeft: Radius.circular(15)),
-                          )),
-                      Container(
-                          margin: const EdgeInsets.only(left: 20),
-                          width: 160,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Row(
-                                children: const [
-                                  Text(
-                                    "Pembayaran PDAM",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: const [
-                                  Text(
-                                    "Bulan : Agustus",
-                                    style: TextStyle(
-                                        fontSize: 9,
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              )
-                            ],
-                          )),
-                      Container(
-                          margin: EdgeInsets.only(left: 7),
-                          child: InkWell(
-                            child: Icon(
-                              Icons.arrow_forward_ios_rounded,
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Detailpembayaran(
+                              id: int.parse(pembayaranModelGet!
+                                  .dataTransaksi![index].id
+                                  .toString())),
+                        ));
+                  },
+                  child: Container(
+                    height: 60,
+                    margin:
+                        const EdgeInsets.only(right: 20, top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                        color: boxcolor,
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color.fromARGB(18, 0, 0, 0),
+                            spreadRadius: 2,
+                            blurRadius: 7,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(15)),
+                    width: 231,
+                    child: Row(
+                      children: [
+                        Container(
+                            width: 10,
+                            decoration: BoxDecoration(
                               color: secondarycolor,
-                            ),
-                          ))
-                    ],
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(15),
+                                  bottomLeft: Radius.circular(15)),
+                            )),
+                        Container(
+                            margin: const EdgeInsets.only(left: 20),
+                            width: 160,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      pembayaranModelGet!
+                                          .dataTransaksi![index].trxName
+                                          .toString(),
+                                      style: TextStyle(
+                                          color: surfacecolor,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      Idrcvt.convertToIdr(
+                                          count: int.parse(pembayaranModelGet!
+                                              .dataTransaksi![index].totalTrx
+                                              .toString()),
+                                          decimalDigit: 2),
+                                      style: TextStyle(
+                                          fontSize: 9,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            )),
+                        Container(
+                            margin: EdgeInsets.only(left: 7),
+                            child: InkWell(
+                              child: Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: accentcolor,
+                              ),
+                            ))
+                      ],
+                    ),
                   ),
                 );
               },
@@ -727,7 +849,8 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Text(
                 "Urun Rembug Teratas",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: surfacecolor),
               ),
             ],
           ),
@@ -735,13 +858,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: 5,
+              itemCount: rembugData!.rembug!.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   margin: const EdgeInsets.only(
                     top: 15,
                   ),
-                  padding: EdgeInsets.all(20),
                   width: 315,
                   decoration: BoxDecoration(
                     boxShadow: const [
@@ -752,13 +874,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         offset: Offset(0, 3), // changes position of shadow
                       ),
                     ],
-                    color: Colors.white,
+                    color: boxcolor,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Column(
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(bottom: 10),
+                        margin: const EdgeInsets.only(top: 20, left: 20),
                         child: Row(
                           children: [
                             Container(
@@ -769,8 +891,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   width: 35,
                                   decoration: BoxDecoration(
                                       image: DecorationImage(
-                                          image: NetworkImage(
-                                              "https://i.pinimg.com/550x/9c/bc/af/9cbcafccdbd1995937772a047437ceb9.jpg"),
+                                          image: NetworkImage(rembugData!
+                                              .rembug![index].users!.imageUser
+                                              .toString()),
                                           fit: BoxFit.cover),
                                       borderRadius: BorderRadius.circular(100),
                                       color: Colors.grey),
@@ -778,12 +901,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             Expanded(
-                              flex: 7,
+                              flex: 1,
                               child: Container(
-                                margin: EdgeInsets.only(left: 20),
-                                child: const Text(
-                                  "Keyyy",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                margin: EdgeInsets.only(left: 10),
+                                child: Text(
+                                  rembugData!.rembug![index].users!.username
+                                      .toString(),
+                                  style: TextStyle(
+                                      color: surfacecolor,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
@@ -792,104 +918,200 @@ class _HomeScreenState extends State<HomeScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(
-                                    "Hari ini",
+                                    formatTglIndo(
+                                                date: rembugData!
+                                                    .rembug![index].createdDate
+                                                    .toString()) ==
+                                            dateenow.toString()
+                                        ? "Hari ini"
+                                        : daykmrin(
+                                                            date: rembugData!
+                                                                .rembug![index]
+                                                                .createdDate
+                                                                .toString())
+                                                        .toString() +
+                                                    formatBulanIndo(
+                                                        date: rembugData!
+                                                            .rembug![index]
+                                                            .createdDate
+                                                            .toString()) ==
+                                                daynow.toString() +
+                                                    datenow2.toString()
+                                            ? "Kemarin"
+                                            : formatTglIndo(
+                                                date: rembugData!
+                                                    .rembug![index].createdDate
+                                                    .toString()),
                                     style: TextStyle(
                                         fontSize: 8,
                                         color: Colors.grey,
                                         fontWeight: FontWeight.bold),
                                   ),
+                                  PopupMenuButton(
+                                      icon: Icon(
+                                        Icons.more_vert_rounded,
+                                        color: surfacecolor,
+                                      ),
+                                      itemBuilder: (context) {
+                                        return [
+                                          PopupMenuItem<int>(
+                                            value: 0,
+                                            child: Text("Laporkan"),
+                                          ),
+                                        ];
+                                      },
+                                      onSelected: (value) {
+                                        if (value == 0) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                  title: Text(
+                                                      "Masukkan deskripsi laporan"),
+                                                  actions: [
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text("Batal")),
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            Navigator.pop(
+                                                                context);
+                                                            isload = true;
+                                                            _postreport(
+                                                                deskripsi:
+                                                                    deskripsitxt
+                                                                        .text,
+                                                                id_post: rembugData!
+                                                                    .rembug![
+                                                                        index]
+                                                                    .id
+                                                                    .toString(),
+                                                                id_user_posts:
+                                                                    rembugData!
+                                                                        .rembug![
+                                                                            index]
+                                                                        .users!
+                                                                        .id
+                                                                        .toString());
+                                                          });
+                                                        },
+                                                        child: Text(
+                                                          "Report",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.red),
+                                                        ))
+                                                  ],
+                                                  content: TextFormField(
+                                                    controller: deskripsitxt,
+                                                  ));
+                                            },
+                                          );
+                                        }
+                                      })
                                 ],
                               ),
                             )
                           ],
                         ),
                       ),
-                      Row(
-                        children: [
-                          Container(
-                            width: 200,
-                            child: const Text(
-                              "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-                              style: TextStyle(fontSize: 9),
-                            ),
-                          ),
-                        ],
-                      ),
-                      img != ""
-                          ? Container(
-                              margin: const EdgeInsets.only(top: 20),
-                              height: 135,
-                              width: 300,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: NetworkImage(img),
-                                      fit: BoxFit.cover),
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.grey),
-                            )
-                          : Container(),
                       Container(
-                        margin: const EdgeInsets.only(top: 20),
-                        child: Row(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
                           children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(right: 5),
-                                    child: InkWell(
-                                      onTap: () {},
-                                      child: Icon(
-                                        Icons.favorite_outline,
-                                        size: 18,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(right: 5),
-                                    child: InkWell(
-                                      onTap: () {},
-                                      child: Icon(
-                                        Icons.share,
-                                        size: 18,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {},
-                                    child: Icon(
-                                      Icons.reply_all,
-                                      size: 18,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Text(
+                                rembugData!.rembug![index].deskripsi.toString(),
+                                style: TextStyle(
+                                    fontSize: 12, color: surfacecolor),
+                              ),
+                            ),
+                            rembugData!.rembug![index].image != null
+                                ? Container(
+                                    margin: const EdgeInsets.only(top: 20),
+                                    height: 135,
+                                    width: 300,
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: NetworkImage(rembugData!
+                                                .rembug![index].image
+                                                .toString()),
+                                            fit: BoxFit.cover),
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.grey),
                                   )
-                                ],
-                              ),
-                            ),
-                            Expanded(
+                                : Container(),
+                            Container(
+                              padding: const EdgeInsets.only(top: 20),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  const Text(
-                                    "10:00",
-                                    style: TextStyle(
-                                        fontSize: 8,
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold),
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CommentUrunRembugUI(
+                                                          rembug: rembugData!
+                                                              .rembug![index]),
+                                                ));
+                                          },
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.reply_all,
+                                                size: 22,
+                                                color: accentcolor,
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                rembugData!.rembug![index]
+                                                    .commentsCount
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    color: accentcolor),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          formatJamIndo(
+                                              date: rembugData!
+                                                  .rembug![index].createdDate
+                                                  .toString()),
+                                          style: TextStyle(
+                                              fontSize: 8,
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
+                            )
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 );

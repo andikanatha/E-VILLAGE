@@ -37,7 +37,7 @@ class _DetaillaporanState extends State<Detaillaporan> {
         },
         backgroundcolor: Theme.of(context).colorScheme.primary,
       ),
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: secondarycolor,
       body: Container(
         decoration: BoxDecoration(
             color: primarycolor,
@@ -56,24 +56,28 @@ class _DetaillaporanState extends State<Detaillaporan> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // widget.dataTransaksi!.image.toString() != ""
-                      //     ? Container(
-                      //         height: 180,
-                      //         width: MediaQuery.of(context).size.width,
-                      //         child: ClipRRect(
-                      //             borderRadius: BorderRadius.circular(20),
-                      //             child: Image.network(
-                      //                 widget.dataTransaksi!.image.toString())),
-                      //         decoration: BoxDecoration(
-                      //             borderRadius: BorderRadius.circular(20),
-                      //             color: inputtxtbg),
-                      //       )
-                      //     : SizedBox(),
-                      // SizedBox(
-                      //   height: 20,
-                      // ),
-                      Text("Deskripsi Laporan"),
+                      widget.dataTransaksi!.image != null
+                          ? Container(
+                              height: 180,
+                              width: MediaQuery.of(context).size.width,
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.network(
+                                    widget.dataTransaksi!.image.toString(),
+                                    fit: BoxFit.cover,
+                                  )),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: inputtxtbg),
+                            )
+                          : SizedBox(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text("Deskripsi Laporan",
+                          style: TextStyle(color: surfacecolor)),
                       TextFormField(
+                          style: TextStyle(color: surfacecolor),
                           readOnly: true,
                           controller: deskripsi,
                           maxLines: 4,
@@ -97,8 +101,10 @@ class _DetaillaporanState extends State<Detaillaporan> {
                       SizedBox(
                         height: 20,
                       ),
-                      Text("Tempat Kejadian"),
+                      Text("Tempat Kejadian",
+                          style: TextStyle(color: surfacecolor)),
                       TextFormField(
+                          style: TextStyle(color: surfacecolor),
                           readOnly: true,
                           controller: tempat_kejadian,
                           maxLines: 2,

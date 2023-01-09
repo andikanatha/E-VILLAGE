@@ -14,7 +14,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: secondarycolor,
       appBar: defaultappbar(
           title: "Notifikasi",
           ontap: () {
@@ -26,7 +26,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         children: [
           Container(
             height: 200,
-            color: Theme.of(context).colorScheme.primary,
+            color: secondarycolor,
           ),
           Container(
             decoration: BoxDecoration(
@@ -57,18 +57,27 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                   Offset(0, 3), // changes position of shadow
                             ),
                           ],
-                          color: primarycolor,
+                          color: boxcolor,
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: ListTile(
                           title: Text(
                             "Pembayaran Sampah",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: surfacecolor,
+                                fontWeight: FontWeight.bold),
                           ),
-                          subtitle:
-                              Text("Hore, pembayaran sampah bulan ini sukses!"),
+                          subtitle: Text(
+                            "Hore, pembayaran sampah bulan ini sukses!",
+                            style: TextStyle(color: surfacecolor),
+                          ),
                           trailing: Column(
-                            children: [Text("10:00")],
+                            children: [
+                              Text(
+                                "10:00",
+                                style: TextStyle(color: surfacecolor),
+                              )
+                            ],
                           ),
                           leading: Container(
                               decoration: BoxDecoration(
