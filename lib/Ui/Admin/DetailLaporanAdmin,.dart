@@ -38,7 +38,7 @@ class _DetaillaporanState extends State<DetaillaporanAdmin> {
         },
         backgroundcolor: Theme.of(context).colorScheme.primary,
       ),
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: primarycolor,
       body: Container(
         decoration: BoxDecoration(
             color: primarycolor,
@@ -75,8 +75,12 @@ class _DetaillaporanState extends State<DetaillaporanAdmin> {
                       SizedBox(
                         height: 20,
                       ),
-                      Text("Deskripsi Laporan"),
+                      Text(
+                        "Deskripsi Laporan",
+                        style: TextStyle(color: surfacecolor),
+                      ),
                       TextFormField(
+                          style: TextStyle(color: surfacecolor),
                           readOnly: true,
                           controller: deskripsi,
                           maxLines: 4,
@@ -100,8 +104,12 @@ class _DetaillaporanState extends State<DetaillaporanAdmin> {
                       SizedBox(
                         height: 20,
                       ),
-                      Text("Tempat Kejadian"),
+                      Text(
+                        "Tempat Kejadian",
+                        style: TextStyle(color: surfacecolor),
+                      ),
                       TextFormField(
+                          style: TextStyle(color: surfacecolor),
                           readOnly: true,
                           controller: tempat_kejadian,
                           maxLines: 2,

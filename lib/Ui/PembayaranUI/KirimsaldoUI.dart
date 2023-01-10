@@ -175,7 +175,7 @@ class _KirimSaldoUIState extends State<KirimSaldoUI> {
                                               hintStyle: GoogleFonts.poppins(
                                                 fontSize: 12,
                                               ),
-                                              hintText: 'Nominal')),
+                                              hintText: 'Username')),
                                       userSearchModel!.users!.length > 0
                                           ? ListView.builder(
                                               physics:

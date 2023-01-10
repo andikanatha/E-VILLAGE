@@ -45,6 +45,7 @@ class _LaporanPDAMState extends State<DetailPengeluaran> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: primarycolor,
       appBar: defaultappbar(
           title: "Pengeluaran",
           ontap: () {
@@ -61,6 +62,7 @@ class _LaporanPDAMState extends State<DetailPengeluaran> {
                   child: Column(
                     children: [
                       TextFormField(
+                          style: TextStyle(color: surfacecolor),
                           enabled: false,
                           controller: nominal,
                           keyboardType: TextInputType.number,
@@ -77,10 +79,6 @@ class _LaporanPDAMState extends State<DetailPengeluaran> {
                               ),
                               filled: true,
                               fillColor: inputtxtbg,
-                              prefixIcon: Icon(
-                                Icons.email,
-                                color: surfacecolor,
-                              ),
                               hintStyle: GoogleFonts.poppins(
                                 fontSize: 12,
                               ),
@@ -89,6 +87,7 @@ class _LaporanPDAMState extends State<DetailPengeluaran> {
                         height: 20,
                       ),
                       TextFormField(
+                          style: TextStyle(color: surfacecolor),
                           enabled: false,
                           controller: keperluan,
                           validator: (val) => val!.isEmpty
@@ -104,10 +103,6 @@ class _LaporanPDAMState extends State<DetailPengeluaran> {
                               ),
                               filled: true,
                               fillColor: inputtxtbg,
-                              prefixIcon: Icon(
-                                Icons.email,
-                                color: surfacecolor,
-                              ),
                               hintStyle: GoogleFonts.poppins(
                                 fontSize: 12,
                               ),
@@ -116,6 +111,7 @@ class _LaporanPDAMState extends State<DetailPengeluaran> {
                         height: 20,
                       ),
                       TextFormField(
+                          style: TextStyle(color: surfacecolor),
                           enabled: false,
                           controller: deskripsi,
                           maxLines: 4,

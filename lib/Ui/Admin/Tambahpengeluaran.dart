@@ -102,10 +102,6 @@ class _LaporanPDAMState extends State<TambahPengeluaran> {
                               ),
                               filled: true,
                               fillColor: inputtxtbg,
-                              prefixIcon: Icon(
-                                Icons.email,
-                                color: surfacecolor,
-                              ),
                               hintStyle: GoogleFonts.poppins(
                                 fontSize: 12,
                               ),
@@ -140,10 +136,6 @@ class _LaporanPDAMState extends State<TambahPengeluaran> {
                               ),
                               filled: true,
                               fillColor: inputtxtbg,
-                              prefixIcon: Icon(
-                                Icons.email,
-                                color: surfacecolor,
-                              ),
                               hintStyle: GoogleFonts.poppins(
                                 fontSize: 12,
                               ),

@@ -78,14 +78,14 @@ class _UrunRembugPostUIState extends State<UrunRembugUpdateUI> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: primarycolor,
       appBar: defaultappbar(
         btncek: ModalRoute.of(context)?.canPop ?? false,
         title: "Tambah Saran",
         ontap: () {
           Navigator.pop(context);
         },
-        backgroundcolor: Theme.of(context).colorScheme.primary,
+        backgroundcolor: primarycolor,
       ),
       body: isload
           ? Container(
@@ -116,7 +116,10 @@ class _UrunRembugPostUIState extends State<UrunRembugUpdateUI> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Gambar"),
+                                Text(
+                                  "Gambar",
+                                  style: TextStyle(color: surfacecolor),
+                                ),
                                 InkWell(
                                   onTap: () {
                                     getImage();
@@ -163,15 +166,20 @@ class _UrunRembugPostUIState extends State<UrunRembugUpdateUI> {
                                             fontSize: 10, color: Colors.red)),
                                     Text(
                                       "Opsional, bisa menambahkan atau tidak",
-                                      style: TextStyle(fontSize: 10),
+                                      style: TextStyle(
+                                          fontSize: 10, color: surfacecolor),
                                     ),
                                   ],
                                 ),
                                 SizedBox(
                                   height: 20,
                                 ),
-                                Text("Saran Anda"),
+                                Text(
+                                  "Saran Anda",
+                                  style: TextStyle(color: surfacecolor),
+                                ),
                                 TextFormField(
+                                    style: TextStyle(color: surfacecolor),
                                     controller: deskripsi,
                                     maxLines: 4,
                                     validator: (val) => val!.isEmpty
