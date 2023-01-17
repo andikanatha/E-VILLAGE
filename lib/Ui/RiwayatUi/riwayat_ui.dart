@@ -452,7 +452,28 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                           );
                         }
                       })
-                  : Text("Tidak ditemukan data"),
+                  : Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 120,
+                            ),
+                            SvgPicture.asset("Asset/Svg/nodata.svg"),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Tidak ditemukan riwayat pembayaran nih...",
+                              style: TextStyle(color: hinttext),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
             ],
           ),
         ],
@@ -534,181 +555,204 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
               SizedBox(
                 height: 20,
               ),
-              ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: getpemasukan!.dataTransaksi!.length,
-                  itemBuilder: (BuildContext context, int i) {
-                    bool isSameDate = true;
-                    final String dateString =
-                        getpemasukan!.dataTransaksi![i].trxDate.toString();
-                    final DateTime date = DateTime.parse(dateString);
-                    final item = getpemasukan!.dataTransaksi![i];
-                    if (i == 0) {
-                      isSameDate = false;
-                    } else {
-                      final String prevDateString = getpemasukan!
-                          .dataTransaksi![i - 1].trxDate
-                          .toString();
-                      final DateTime prevDate = DateTime.parse(prevDateString);
-                      isSameDate = date.isSameDate(prevDate);
-                    }
-                    if (i == 0 || !(isSameDate)) {
-                      return Column(children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            children: [
-                              Text(
-                                formatTglIndo(date: dateString),
+              getpemasukan!.dataTransaksi!.length > 0
+                  ? ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: getpemasukan!.dataTransaksi!.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        bool isSameDate = true;
+                        final String dateString =
+                            getpemasukan!.dataTransaksi![i].trxDate.toString();
+                        final DateTime date = DateTime.parse(dateString);
+                        final item = getpemasukan!.dataTransaksi![i];
+                        if (i == 0) {
+                          isSameDate = false;
+                        } else {
+                          final String prevDateString = getpemasukan!
+                              .dataTransaksi![i - 1].trxDate
+                              .toString();
+                          final DateTime prevDate =
+                              DateTime.parse(prevDateString);
+                          isSameDate = date.isSameDate(prevDate);
+                        }
+                        if (i == 0 || !(isSameDate)) {
+                          return Column(children: [
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    formatTglIndo(date: dateString),
+                                    style: TextStyle(color: surfacecolor),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: boxcolor,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color.fromARGB(37, 0, 0, 0),
+                                    spreadRadius: 2,
+                                    blurRadius: 7,
+                                    offset: Offset(
+                                        0, 3), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Detailpembayaran(
+                                            id: int.parse(getpemasukan!
+                                                .dataTransaksi![i].id
+                                                .toString())),
+                                      ));
+                                },
+                                title: Text(
+                                  getpemasukan!.dataTransaksi![i].trxName
+                                      .toString(),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: surfacecolor),
+                                ),
+                                subtitle: Text(
+                                  Idrcvt.convertToIdr(
+                                      count: int.parse(getpemasukan!
+                                          .dataTransaksi![i].totalTrx
+                                          .toString()),
+                                      decimalDigit: 2),
+                                  style: TextStyle(color: surfacecolor),
+                                ),
+                                trailing: Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  color: accentcolor,
+                                ),
+                                leading: Container(
+                                    decoration: BoxDecoration(
+                                        color: themee
+                                            ? secondarycolor
+                                            : Color.fromARGB(
+                                                255, 218, 236, 242),
+                                        borderRadius: BorderRadius.circular(7)),
+                                    height: 60,
+                                    width: 60,
+                                    child: Center(
+                                      child: Icon(
+                                          getpemasukan!.dataTransaksi![i].status
+                                                      .toString() ==
+                                                  "Berhasil"
+                                              ? Icons.check
+                                              : Icons.report,
+                                          color: getpemasukan!
+                                                      .dataTransaksi![i].status
+                                                      .toString() ==
+                                                  "Berhasil"
+                                              ? Color.fromARGB(
+                                                  255, 130, 222, 255)
+                                              : Colors.red),
+                                    )),
+                              ),
+                            )
+                          ]);
+                        } else {
+                          return Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: boxcolor,
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color.fromARGB(37, 0, 0, 0),
+                                  spreadRadius: 2,
+                                  blurRadius: 7,
+                                  offset: Offset(
+                                      0, 3), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Detailpembayaran(
+                                          id: int.parse(getpemasukan!
+                                              .dataTransaksi![i].id
+                                              .toString())),
+                                    ));
+                              },
+                              title: Text(
+                                getpemasukan!.dataTransaksi![i].trxName
+                                    .toString(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: surfacecolor),
+                              ),
+                              subtitle: Text(
+                                Idrcvt.convertToIdr(
+                                    count: int.parse(getpemasukan!
+                                        .dataTransaksi![i].totalTrx
+                                        .toString()),
+                                    decimalDigit: 2),
                                 style: TextStyle(color: surfacecolor),
                               ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: boxcolor,
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color.fromARGB(37, 0, 0, 0),
-                                spreadRadius: 2,
-                                blurRadius: 7,
-                                offset:
-                                    Offset(0, 3), // changes position of shadow
+                              trailing: Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: accentcolor,
                               ),
-                            ],
-                          ),
-                          child: ListTile(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Detailpembayaran(
-                                        id: int.parse(getpemasukan!
-                                            .dataTransaksi![i].id
-                                            .toString())),
-                                  ));
-                            },
-                            title: Text(
-                              getpemasukan!.dataTransaksi![i].trxName
-                                  .toString(),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: surfacecolor),
+                              leading: Container(
+                                  decoration: BoxDecoration(
+                                      color: themee
+                                          ? secondarycolor
+                                          : Color.fromARGB(255, 218, 236, 242),
+                                      borderRadius: BorderRadius.circular(7)),
+                                  height: 60,
+                                  width: 60,
+                                  child: Center(
+                                    child: Icon(
+                                        getpemasukan!.dataTransaksi![i].status
+                                                    .toString() ==
+                                                "Berhasil"
+                                            ? Icons.check
+                                            : Icons.report,
+                                        color: getpemasukan!
+                                                    .dataTransaksi![i].status
+                                                    .toString() ==
+                                                "Berhasil"
+                                            ? Color.fromARGB(255, 130, 222, 255)
+                                            : Colors.red),
+                                  )),
                             ),
-                            subtitle: Text(
-                              Idrcvt.convertToIdr(
-                                  count: int.parse(getpemasukan!
-                                      .dataTransaksi![i].totalTrx
-                                      .toString()),
-                                  decimalDigit: 2),
-                              style: TextStyle(color: surfacecolor),
-                            ),
-                            trailing: Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: accentcolor,
-                            ),
-                            leading: Container(
-                                decoration: BoxDecoration(
-                                    color: themee
-                                        ? secondarycolor
-                                        : Color.fromARGB(255, 218, 236, 242),
-                                    borderRadius: BorderRadius.circular(7)),
-                                height: 60,
-                                width: 60,
-                                child: Center(
-                                  child: Icon(
-                                      getpemasukan!.dataTransaksi![i].status
-                                                  .toString() ==
-                                              "Berhasil"
-                                          ? Icons.check
-                                          : Icons.report,
-                                      color: getpemasukan!
-                                                  .dataTransaksi![i].status
-                                                  .toString() ==
-                                              "Berhasil"
-                                          ? Color.fromARGB(255, 130, 222, 255)
-                                          : Colors.red),
-                                )),
+                          );
+                        }
+                      })
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 120,
                           ),
-                        )
-                      ]);
-                    } else {
-                      return Container(
-                        margin:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: boxcolor,
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color.fromARGB(37, 0, 0, 0),
-                              spreadRadius: 2,
-                              blurRadius: 7,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Detailpembayaran(
-                                      id: int.parse(getpemasukan!
-                                          .dataTransaksi![i].id
-                                          .toString())),
-                                ));
-                          },
-                          title: Text(
-                            getpemasukan!.dataTransaksi![i].trxName.toString(),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: surfacecolor),
+                          SvgPicture.asset("Asset/Svg/nodata.svg"),
+                          SizedBox(
+                            height: 20,
                           ),
-                          subtitle: Text(
-                            Idrcvt.convertToIdr(
-                                count: int.parse(getpemasukan!
-                                    .dataTransaksi![i].totalTrx
-                                    .toString()),
-                                decimalDigit: 2),
-                            style: TextStyle(color: surfacecolor),
+                          Text(
+                            "Tidak ditemukan riwayat pemasukan nih...",
+                            style: TextStyle(color: hinttext),
                           ),
-                          trailing: Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: accentcolor,
-                          ),
-                          leading: Container(
-                              decoration: BoxDecoration(
-                                  color: themee
-                                      ? secondarycolor
-                                      : Color.fromARGB(255, 218, 236, 242),
-                                  borderRadius: BorderRadius.circular(7)),
-                              height: 60,
-                              width: 60,
-                              child: Center(
-                                child: Icon(
-                                    getpemasukan!.dataTransaksi![i].status
-                                                .toString() ==
-                                            "Berhasil"
-                                        ? Icons.check
-                                        : Icons.report,
-                                    color: getpemasukan!
-                                                .dataTransaksi![i].status
-                                                .toString() ==
-                                            "Berhasil"
-                                        ? Color.fromARGB(255, 130, 222, 255)
-                                        : Colors.red),
-                              )),
-                        ),
-                      );
-                    }
-                  }),
+                        ],
+                      ),
+                    )
             ],
           ),
         ],
@@ -723,64 +767,85 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
         SizedBox(
           height: 40,
         ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: modelLapor!.dataTransaksi!.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: boxcolor,
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color.fromARGB(37, 0, 0, 0),
-                    spreadRadius: 2,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              child: ListTile(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Detaillaporan(
-                            dataTransaksi: modelLapor!.dataTransaksi![index]),
-                      ));
-                },
-                title: Text(
-                  "Laporan " + index.toString(),
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: surfacecolor),
-                ),
-                subtitle: Text(
-                  formatTglIndo(
-                      date: modelLapor!.dataTransaksi![index].createdDate
-                          .toString()),
-                  style: TextStyle(color: surfacecolor),
-                ),
-                trailing: Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: accentcolor,
-                ),
-                leading: Container(
+        modelLapor!.dataTransaksi!.length > 0
+            ? ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: modelLapor!.dataTransaksi!.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     decoration: BoxDecoration(
-                        color: themee
-                            ? secondarycolor
-                            : Color.fromARGB(255, 218, 236, 242),
-                        borderRadius: BorderRadius.circular(7)),
-                    height: 60,
-                    width: 60,
-                    child: Center(
-                      child: SvgPicture.asset("Asset/Svg/IconsReport.svg"),
-                    )),
-              ),
-            );
-          },
-        ),
+                      borderRadius: BorderRadius.circular(10),
+                      color: boxcolor,
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color.fromARGB(37, 0, 0, 0),
+                          spreadRadius: 2,
+                          blurRadius: 7,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Detaillaporan(
+                                  dataTransaksi:
+                                      modelLapor!.dataTransaksi![index]),
+                            ));
+                      },
+                      title: Text(
+                        "Laporan " + index.toString(),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: surfacecolor),
+                      ),
+                      subtitle: Text(
+                        formatTglIndo(
+                            date: modelLapor!.dataTransaksi![index].createdDate
+                                .toString()),
+                        style: TextStyle(color: surfacecolor),
+                      ),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: accentcolor,
+                      ),
+                      leading: Container(
+                          decoration: BoxDecoration(
+                              color: themee
+                                  ? secondarycolor
+                                  : Color.fromARGB(255, 218, 236, 242),
+                              borderRadius: BorderRadius.circular(7)),
+                          height: 60,
+                          width: 60,
+                          child: Center(
+                            child:
+                                SvgPicture.asset("Asset/Svg/IconsReport.svg"),
+                          )),
+                    ),
+                  );
+                },
+              )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 150,
+                    ),
+                    SvgPicture.asset("Asset/Svg/nodata.svg"),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Belum ada pelaporan nih...",
+                      style: TextStyle(color: hinttext),
+                    ),
+                  ],
+                ),
+              )
       ],
     );
   }

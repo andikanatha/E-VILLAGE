@@ -7,6 +7,7 @@ import 'package:e_villlage/Data/settings.dart';
 import 'package:e_villlage/Ui/Admin/HomescreenAdminUI.dart';
 import 'package:e_villlage/Ui/OnBoardingScreen/OnboardingUI.dart';
 import 'package:e_villlage/Ui/Theme.dart';
+import 'package:e_villlage/Ui/Widget/ErrorWidget.dart';
 import 'package:e_villlage/Ui/Widget/Navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -44,6 +45,7 @@ class CheckLogin extends StatefulWidget {
 }
 
 class _CheckLoginState extends State<CheckLogin> {
+  bool error = false;
   void _loadUserInfo() async {
     bool theme = await getisDarkTheme();
     if (theme == true) {
@@ -88,9 +90,9 @@ class _CheckLoginState extends State<CheckLogin> {
               MaterialPageRoute(builder: (context) => OnBoarding()),
               (route) => false);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('${response.error}'),
-          ));
+          setState(() {
+            error = true;
+          });
         }
       }
     }
@@ -104,10 +106,19 @@ class _CheckLoginState extends State<CheckLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      color: primarycolor,
-      child: const Center(child: CircularProgressIndicator()),
+    return Scaffold(
+      body: error
+          ? iserror(ontap: () {
+              setState(() {
+                error = false;
+                _loadUserInfo();
+              });
+            })
+          : Container(
+              height: MediaQuery.of(context).size.height,
+              color: primarycolor,
+              child: const Center(child: CircularProgressIndicator()),
+            ),
     );
   }
 }

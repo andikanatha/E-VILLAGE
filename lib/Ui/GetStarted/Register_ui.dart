@@ -41,11 +41,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
           return AlertDialog(
             title: Text("Peringatan gagal mendaftar"),
             content: Text(
-                "Email yang kamu gunakan untuk mendaftar telah terdaftar sebelumnya, silahkan login sekarang"),
+                "Username atau Email yang kamu gunakan untuk mendaftar telah terdaftar sebelumnya, silahkan login sekarang"),
             actions: [
               TextButton(
                   onPressed: () {
                     Navigator.pop(context);
+                    setState(() {
+                      load = false;
+                    });
                   },
                   child: Text("Tidak")),
               TextButton(
@@ -72,6 +75,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             actions: [
               TextButton(
                   onPressed: () {
+                    setState(() {
+                      load = false;
+                    });
                     Navigator.pop(context);
                   },
                   child: Text("Oke"))

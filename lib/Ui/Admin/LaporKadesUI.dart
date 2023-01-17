@@ -11,6 +11,7 @@ import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/LoadWidget.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -63,208 +64,236 @@ class _LaporKadesAdminUIState extends State<LaporKadesAdminUI> {
           : ListView(
               children: [
                 Container(
-                  margin: EdgeInsets.only(top: 20),
-                  child: ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: laporanWarga!.laporan!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        bool isSameDate = true;
-                        final String dateString = laporanWarga!
-                            .laporan![index].createdDate
-                            .toString();
-                        final DateTime date = DateTime.parse(dateString);
-                        final item = laporanWarga!.laporan![index];
-                        if (index == 0) {
-                          isSameDate = false;
-                        } else {
-                          final String prevDateString = laporanWarga!
-                              .laporan![index - 1].createdDate
-                              .toString();
-                          final DateTime prevDate =
-                              DateTime.parse(prevDateString);
-                          isSameDate = date.isSameDate(prevDate);
-                        }
-                        if (index == 0 || !(isSameDate)) {
-                          return Column(children: [
-                            Container(
-                              margin: EdgeInsets.symmetric(horizontal: 20),
-                              child: Row(
-                                children: [
-                                  Text(formatTglIndo(date: dateString),
-                                      style: TextStyle(color: surfacecolor)),
-                                ],
-                              ),
-                            ),
-                            Container(
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 20),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 20),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: boxcolor,
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Color.fromARGB(37, 0, 0, 0),
-                                      spreadRadius: 2,
-                                      blurRadius: 7,
-                                      offset: Offset(
-                                          0, 3), // changes position of shadow
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
+                    margin: EdgeInsets.only(top: 20),
+                    child: laporanWarga!.laporan!.length > 0
+                        ? ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: laporanWarga!.laporan!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              bool isSameDate = true;
+                              final String dateString = laporanWarga!
+                                  .laporan![index].createdDate
+                                  .toString();
+                              final DateTime date = DateTime.parse(dateString);
+                              final item = laporanWarga!.laporan![index];
+                              if (index == 0) {
+                                isSameDate = false;
+                              } else {
+                                final String prevDateString = laporanWarga!
+                                    .laporan![index - 1].createdDate
+                                    .toString();
+                                final DateTime prevDate =
+                                    DateTime.parse(prevDateString);
+                                isSameDate = date.isSameDate(prevDate);
+                              }
+                              if (index == 0 || !(isSameDate)) {
+                                return Column(children: [
+                                  Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    child: Row(
                                       children: [
-                                        Expanded(
-                                            child: Text(
-                                          laporanWarga!
-                                              .laporan![index].users!.username
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: surfacecolor),
-                                        )),
-                                        Expanded(
-                                            child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                                formatJamIndo(
-                                                    date: laporanWarga!
-                                                        .laporan![index]
-                                                        .createdDate
-                                                        .toString()),
-                                                style: TextStyle(
-                                                    color: surfacecolor)),
-                                          ],
-                                        )),
+                                        Text(formatTglIndo(date: dateString),
+                                            style:
+                                                TextStyle(color: surfacecolor)),
                                       ],
                                     ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                        laporanWarga!.laporan![index].deskripsi
-                                            .toString(),
-                                        style: TextStyle(color: surfacecolor)),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DetaillaporanAdmin(
-                                                  laporan: laporanWarga!
-                                                      .laporan![index],
-                                                ),
-                                              ));
-                                        },
-                                        child: Container(
-                                            margin: EdgeInsets.symmetric(
-                                                horizontal: 20),
-                                            child: Text(
-                                              "Detail",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                            )))
-                                  ],
-                                ))
-                          ]);
-                        } else {
-                          return Container(
-                              margin: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 20),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 20),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: boxcolor,
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color.fromARGB(37, 0, 0, 0),
-                                    spreadRadius: 2,
-                                    blurRadius: 7,
-                                    offset: Offset(
-                                        0, 3), // changes position of shadow
                                   ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                          child: Text(
-                                        laporanWarga!
-                                            .laporan![index].users!.username
-                                            .toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: surfacecolor),
-                                      )),
-                                      Expanded(
-                                          child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
+                                  Container(
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 20),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 20),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: boxcolor,
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Color.fromARGB(37, 0, 0, 0),
+                                            spreadRadius: 2,
+                                            blurRadius: 7,
+                                            offset: Offset(0,
+                                                3), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                  child: Text(
+                                                laporanWarga!.laporan![index]
+                                                    .users!.username
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: surfacecolor),
+                                              )),
+                                              Expanded(
+                                                  child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                      formatJamIndo(
+                                                          date: laporanWarga!
+                                                              .laporan![index]
+                                                              .createdDate
+                                                              .toString()),
+                                                      style: TextStyle(
+                                                          color: surfacecolor)),
+                                                ],
+                                              )),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
                                           Text(
-                                              formatJamIndo(
-                                                  date: laporanWarga!
-                                                      .laporan![index]
-                                                      .createdDate
-                                                      .toString()),
+                                              laporanWarga!
+                                                  .laporan![index].deskripsi
+                                                  .toString(),
                                               style: TextStyle(
                                                   color: surfacecolor)),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          DetaillaporanAdmin(
+                                                        laporan: laporanWarga!
+                                                            .laporan![index],
+                                                      ),
+                                                    ));
+                                              },
+                                              child: Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                                  child: Text(
+                                                    "Detail",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  )))
                                         ],
-                                      )),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                      laporanWarga!.laporan![index].deskripsi
-                                          .toString(),
-                                      style: TextStyle(color: surfacecolor)),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  DetaillaporanAdmin(
-                                                laporan: laporanWarga!
-                                                    .laporan![index],
-                                              ),
-                                            ));
-                                      },
-                                      child: Container(
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 20),
-                                          child: Text(
-                                            "Detail",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
-                                          )))
-                                ],
-                              ));
-                        }
-                      }),
-                )
+                                      ))
+                                ]);
+                              } else {
+                                return Container(
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 20),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: boxcolor,
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Color.fromARGB(37, 0, 0, 0),
+                                          spreadRadius: 2,
+                                          blurRadius: 7,
+                                          offset: Offset(0,
+                                              3), // changes position of shadow
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                                child: Text(
+                                              laporanWarga!.laporan![index]
+                                                  .users!.username
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: surfacecolor),
+                                            )),
+                                            Expanded(
+                                                child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                    formatJamIndo(
+                                                        date: laporanWarga!
+                                                            .laporan![index]
+                                                            .createdDate
+                                                            .toString()),
+                                                    style: TextStyle(
+                                                        color: surfacecolor)),
+                                              ],
+                                            )),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                            laporanWarga!
+                                                .laporan![index].deskripsi
+                                                .toString(),
+                                            style:
+                                                TextStyle(color: surfacecolor)),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DetaillaporanAdmin(
+                                                      laporan: laporanWarga!
+                                                          .laporan![index],
+                                                    ),
+                                                  ));
+                                            },
+                                            child: Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 20),
+                                                child: Text(
+                                                  "Detail",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )))
+                                      ],
+                                    ));
+                              }
+                            })
+                        : Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 150,
+                                ),
+                                SvgPicture.asset("Asset/Svg/nodata.svg"),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  "Belum ada laporan dari warga...",
+                                  style: TextStyle(color: hinttext),
+                                ),
+                              ],
+                            ),
+                          ))
               ],
             ),
     );

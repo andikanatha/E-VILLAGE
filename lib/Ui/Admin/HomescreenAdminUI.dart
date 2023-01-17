@@ -155,12 +155,17 @@ class _HomeScreenAdminState extends State<HomeScreenAdmin> {
             Container(
               margin: EdgeInsets.only(top: 20),
               child: ListTile(
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  final reLoadPage = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => PengaturanUI(),
                       ));
+                  if (!mounted) return;
+                  setState(() {
+                    isload = true;
+                    getuser();
+                  });
                 },
                 trailing: Icon(
                   Icons.arrow_forward_ios_rounded,
@@ -180,12 +185,17 @@ class _HomeScreenAdminState extends State<HomeScreenAdmin> {
             Container(
               margin: EdgeInsets.only(top: 20),
               child: ListTile(
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  final reLoadPage = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => FAQBANTUANUI(),
                       ));
+                  if (!mounted) return;
+                  setState(() {
+                    isload = true;
+                    getuser();
+                  });
                 },
                 trailing: Icon(
                   Icons.arrow_forward_ios_rounded,
@@ -427,13 +437,18 @@ class _HomeScreenAdminState extends State<HomeScreenAdmin> {
                                 Wrap(
                                   children: [
                                     InkWell(
-                                      onTap: () {
-                                        Navigator.push(
+                                      onTap: () async {
+                                        final reLoadPage = await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   LaporanSampah(),
                                             ));
+                                        if (!mounted) return;
+                                        setState(() {
+                                          isload = true;
+                                          getuser();
+                                        });
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(20),
@@ -487,13 +502,18 @@ class _HomeScreenAdminState extends State<HomeScreenAdmin> {
                                       ),
                                     ),
                                     InkWell(
-                                      onTap: () {
-                                        Navigator.push(
+                                      onTap: () async {
+                                        final reLoadPage = await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   LaporanPdam(),
                                             ));
+                                        if (!mounted) return;
+                                        setState(() {
+                                          isload = true;
+                                          getuser();
+                                        });
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(20),
@@ -547,13 +567,18 @@ class _HomeScreenAdminState extends State<HomeScreenAdmin> {
                                       ),
                                     ),
                                     InkWell(
-                                      onTap: () {
-                                        Navigator.push(
+                                      onTap: () async {
+                                        final reLoadPage = await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   KonfirmasiTOPUPSaldo(),
                                             ));
+                                        if (!mounted) return;
+                                        setState(() {
+                                          isload = true;
+                                          getuser();
+                                        });
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(20),
@@ -607,13 +632,18 @@ class _HomeScreenAdminState extends State<HomeScreenAdmin> {
                                       ),
                                     ),
                                     InkWell(
-                                      onTap: () {
-                                        Navigator.push(
+                                      onTap: () async {
+                                        final reLoadPage = await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   LaporanPengeluaran(),
                                             ));
+                                        if (!mounted) return;
+                                        setState(() {
+                                          isload = true;
+                                          getuser();
+                                        });
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(20),
@@ -667,13 +697,18 @@ class _HomeScreenAdminState extends State<HomeScreenAdmin> {
                                       ),
                                     ),
                                     InkWell(
-                                      onTap: () {
-                                        Navigator.push(
+                                      onTap: () async {
+                                        final reLoadPage = await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   LaporKadesAdminUI(),
                                             ));
+                                        if (!mounted) return;
+                                        setState(() {
+                                          isload = true;
+                                          getuser();
+                                        });
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(20),
@@ -727,13 +762,18 @@ class _HomeScreenAdminState extends State<HomeScreenAdmin> {
                                       ),
                                     ),
                                     InkWell(
-                                      onTap: () {
-                                        Navigator.push(
+                                      onTap: () async {
+                                        final reLoadPage = await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   LaporUrunRembug(),
                                             ));
+                                        if (!mounted) return;
+                                        setState(() {
+                                          isload = true;
+                                          getuser();
+                                        });
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(20),

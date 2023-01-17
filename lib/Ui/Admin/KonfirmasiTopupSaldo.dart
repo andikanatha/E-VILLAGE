@@ -9,6 +9,7 @@ import 'package:e_villlage/Ui/Admin/KonfirmasitopupDetail.dart';
 import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -144,247 +145,279 @@ class _KonfirmasiTOPUPSaldoState extends State<KonfirmasiTOPUPSaldo> {
               SizedBox(
                 height: 30,
               ),
-              ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: confirmed!.dataTransaksi!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    bool isSameDate = true;
-                    final String dateString =
-                        confirmed!.dataTransaksi![index].topupDate.toString();
-                    final DateTime date = DateTime.parse(dateString);
-                    final item = confirmed!.dataTransaksi![index];
-                    if (index == 0) {
-                      isSameDate = false;
-                    } else {
-                      final String prevDateString = confirmed!
-                          .dataTransaksi![index - 1].topupDate
-                          .toString();
-                      final DateTime prevDate = DateTime.parse(prevDateString);
-                      isSameDate = date.isSameDate(prevDate);
-                    }
-                    if (index == 0 || !(isSameDate)) {
-                      return Column(children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            children: [
-                              Text(
-                                formatTglIndo(date: dateString),
-                                style: TextStyle(color: surfacecolor),
-                              ),
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      KonfirmasiTopupDetailAdmin(
-                                    dataTransaksi:
-                                        confirmed!.dataTransaksi![index],
-                                  ),
-                                ));
-                          },
-                          child: Container(
-                            height: 70,
-                            margin: const EdgeInsets.only(
-                                right: 20, left: 20, top: 10, bottom: 10),
-                            decoration: BoxDecoration(
-                                color: boxcolor,
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color.fromARGB(18, 0, 0, 0),
-                                    spreadRadius: 2,
-                                    blurRadius: 7,
-                                    offset: Offset(
-                                        0, 3), // changes position of shadow
+              confirmed!.dataTransaksi!.length > 0
+                  ? ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: confirmed!.dataTransaksi!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        bool isSameDate = true;
+                        final String dateString = confirmed!
+                            .dataTransaksi![index].topupDate
+                            .toString();
+                        final DateTime date = DateTime.parse(dateString);
+                        final item = confirmed!.dataTransaksi![index];
+                        if (index == 0) {
+                          isSameDate = false;
+                        } else {
+                          final String prevDateString = confirmed!
+                              .dataTransaksi![index - 1].topupDate
+                              .toString();
+                          final DateTime prevDate =
+                              DateTime.parse(prevDateString);
+                          isSameDate = date.isSameDate(prevDate);
+                        }
+                        if (index == 0 || !(isSameDate)) {
+                          return Column(children: [
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    formatTglIndo(date: dateString),
+                                    style: TextStyle(color: surfacecolor),
                                   ),
                                 ],
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Row(
-                              children: [
-                                Container(
-                                    width: 10,
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(15),
-                                          bottomLeft: Radius.circular(15)),
-                                    )),
-                                Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                      margin: const EdgeInsets.only(left: 20),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                confirmed!.dataTransaksi![index]
-                                                    .users!.username
-                                                    .toString(),
-                                                style: TextStyle(
-                                                    color: surfacecolor,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "Meminta konfirmasi top-up " +
-                                                    Idrcvt.convertToIdr(
-                                                        count: int.parse(
-                                                            confirmed!
-                                                                .dataTransaksi![
-                                                                    index]
-                                                                .nominal
-                                                                .toString()),
-                                                        decimalDigit: 2),
-                                                style: TextStyle(
-                                                    fontSize: 9,
-                                                    color: Colors.grey,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      )),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Container(
-                                          margin:
-                                              const EdgeInsets.only(right: 20),
-                                          child: InkWell(
-                                            child: Icon(
-                                              Icons.arrow_forward_ios_rounded,
-                                              color: secondarycolor,
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ]);
-                    } else {
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    KonfirmasiTopupDetailAdmin(
-                                  dataTransaksi:
-                                      confirmed!.dataTransaksi![index],
-                                ),
-                              ));
-                        },
-                        child: Container(
-                          height: 70,
-                          margin: const EdgeInsets.only(
-                              right: 20, left: 20, top: 10, bottom: 10),
-                          decoration: BoxDecoration(
-                              color: boxcolor,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color.fromARGB(18, 0, 0, 0),
-                                  spreadRadius: 2,
-                                  blurRadius: 7,
-                                  offset: Offset(
-                                      0, 3), // changes position of shadow
-                                ),
-                              ],
-                              borderRadius: BorderRadius.circular(15)),
-                          width: 231,
-                          child: Row(
-                            children: [
-                              Container(
-                                  width: 10,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(15),
-                                        bottomLeft: Radius.circular(15)),
-                                  )),
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                    margin: const EdgeInsets.only(left: 20),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              confirmed!.dataTransaksi![index]
-                                                  .users!.username
-                                                  .toString(),
-                                              style: TextStyle(
-                                                  color: surfacecolor,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "Meminta konfirmasi top-up " +
-                                                  Idrcvt.convertToIdr(
-                                                      count: int.parse(
-                                                          confirmed!
-                                                              .dataTransaksi![
-                                                                  index]
-                                                              .nominal
-                                                              .toString()),
-                                                      decimalDigit: 2),
-                                              style: TextStyle(
-                                                  fontSize: 9,
-                                                  color: Colors.grey,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    )),
                               ),
-                              Expanded(
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          KonfirmasiTopupDetailAdmin(
+                                        dataTransaksi:
+                                            confirmed!.dataTransaksi![index],
+                                      ),
+                                    ));
+                              },
+                              child: Container(
+                                height: 70,
+                                margin: const EdgeInsets.only(
+                                    right: 20, left: 20, top: 10, bottom: 10),
+                                decoration: BoxDecoration(
+                                    color: boxcolor,
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color.fromARGB(18, 0, 0, 0),
+                                        spreadRadius: 2,
+                                        blurRadius: 7,
+                                        offset: Offset(
+                                            0, 3), // changes position of shadow
+                                      ),
+                                    ],
+                                    borderRadius: BorderRadius.circular(15)),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Container(
-                                        margin:
-                                            const EdgeInsets.only(right: 20),
-                                        child: InkWell(
-                                          child: Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            color: secondarycolor,
-                                          ),
+                                        width: 10,
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(15),
+                                              bottomLeft: Radius.circular(15)),
                                         )),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          margin:
+                                              const EdgeInsets.only(left: 20),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    confirmed!
+                                                        .dataTransaksi![index]
+                                                        .users!
+                                                        .username
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        color: surfacecolor,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Meminta konfirmasi top-up " +
+                                                        Idrcvt.convertToIdr(
+                                                            count: int.parse(
+                                                                confirmed!
+                                                                    .dataTransaksi![
+                                                                        index]
+                                                                    .nominal
+                                                                    .toString()),
+                                                            decimalDigit: 2),
+                                                    style: TextStyle(
+                                                        fontSize: 9,
+                                                        color: Colors.grey,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          )),
+                                    ),
+                                    Expanded(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                              margin: const EdgeInsets.only(
+                                                  right: 20),
+                                              child: InkWell(
+                                                child: Icon(
+                                                  Icons
+                                                      .arrow_forward_ios_rounded,
+                                                  color: secondarycolor,
+                                                ),
+                                              )),
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
-                              )
-                            ],
+                              ),
+                            )
+                          ]);
+                        } else {
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        KonfirmasiTopupDetailAdmin(
+                                      dataTransaksi:
+                                          confirmed!.dataTransaksi![index],
+                                    ),
+                                  ));
+                            },
+                            child: Container(
+                              height: 70,
+                              margin: const EdgeInsets.only(
+                                  right: 20, left: 20, top: 10, bottom: 10),
+                              decoration: BoxDecoration(
+                                  color: boxcolor,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Color.fromARGB(18, 0, 0, 0),
+                                      spreadRadius: 2,
+                                      blurRadius: 7,
+                                      offset: Offset(
+                                          0, 3), // changes position of shadow
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(15)),
+                              width: 231,
+                              child: Row(
+                                children: [
+                                  Container(
+                                      width: 10,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(15),
+                                            bottomLeft: Radius.circular(15)),
+                                      )),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Container(
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  confirmed!
+                                                      .dataTransaksi![index]
+                                                      .users!
+                                                      .username
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      color: surfacecolor,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "Meminta konfirmasi top-up " +
+                                                      Idrcvt.convertToIdr(
+                                                          count: int.parse(
+                                                              confirmed!
+                                                                  .dataTransaksi![
+                                                                      index]
+                                                                  .nominal
+                                                                  .toString()),
+                                                          decimalDigit: 2),
+                                                  style: TextStyle(
+                                                      fontSize: 9,
+                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        )),
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                            margin: const EdgeInsets.only(
+                                                right: 20),
+                                            child: InkWell(
+                                              child: Icon(
+                                                Icons.arrow_forward_ios_rounded,
+                                                color: secondarycolor,
+                                              ),
+                                            )),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      })
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 150,
                           ),
-                        ),
-                      );
-                    }
-                  }),
+                          SvgPicture.asset("Asset/Svg/nodata.svg"),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "Tidak ada permintaan yang belum dikonfirmasi...",
+                            style: TextStyle(color: hinttext),
+                          ),
+                        ],
+                      ),
+                    )
             ],
           ),
         ],
@@ -403,76 +436,139 @@ class _KonfirmasiTOPUPSaldoState extends State<KonfirmasiTOPUPSaldo> {
               SizedBox(
                 height: 30,
               ),
-              ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: notconfirmed!.dataTransaksi!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    bool isSameDate = true;
-                    final String dateString = notconfirmed!
-                        .dataTransaksi![index].topupDate
-                        .toString();
-                    final DateTime date = DateTime.parse(dateString);
-                    final item = notconfirmed!.dataTransaksi![index];
-                    if (index == 0) {
-                      isSameDate = false;
-                    } else {
-                      final String prevDateString = notconfirmed!
-                          .dataTransaksi![index - 1].topupDate
-                          .toString();
-                      final DateTime prevDate = DateTime.parse(prevDateString);
-                      isSameDate = date.isSameDate(prevDate);
-                    }
-                    if (index == 0 || !(isSameDate)) {
-                      return Column(children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            children: [
-                              Text(
-                                formatTglIndo(date: dateString),
-                                style: TextStyle(color: surfacecolor),
+              notconfirmed!.dataTransaksi!.length > 0
+                  ? ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: notconfirmed!.dataTransaksi!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        bool isSameDate = true;
+                        final String dateString = notconfirmed!
+                            .dataTransaksi![index].topupDate
+                            .toString();
+                        final DateTime date = DateTime.parse(dateString);
+                        final item = notconfirmed!.dataTransaksi![index];
+                        if (index == 0) {
+                          isSameDate = false;
+                        } else {
+                          final String prevDateString = notconfirmed!
+                              .dataTransaksi![index - 1].topupDate
+                              .toString();
+                          final DateTime prevDate =
+                              DateTime.parse(prevDateString);
+                          isSameDate = date.isSameDate(prevDate);
+                        }
+                        if (index == 0 || !(isSameDate)) {
+                          return Column(children: [
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    formatTglIndo(date: dateString),
+                                    style: TextStyle(color: surfacecolor),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: boxcolor,
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color.fromARGB(37, 0, 0, 0),
-                                spreadRadius: 2,
-                                blurRadius: 7,
-                                offset:
-                                    Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: ListTile(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        KonfirmasiTopupDetailAdmin(
-                                      dataTransaksi:
-                                          notconfirmed!.dataTransaksi![index],
-                                    ),
-                                  ));
-                            },
-                            title: Text(
-                              notconfirmed!
-                                  .dataTransaksi![index].users!.username
-                                  .toString(),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: surfacecolor),
                             ),
-                            subtitle: Text(
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: boxcolor,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color.fromARGB(37, 0, 0, 0),
+                                    spreadRadius: 2,
+                                    blurRadius: 7,
+                                    offset: Offset(
+                                        0, 3), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            KonfirmasiTopupDetailAdmin(
+                                          dataTransaksi: notconfirmed!
+                                              .dataTransaksi![index],
+                                        ),
+                                      ));
+                                },
+                                title: Text(
+                                  notconfirmed!
+                                      .dataTransaksi![index].users!.username
+                                      .toString(),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: surfacecolor),
+                                ),
+                                subtitle: Text(
+                                    "Top-up " +
+                                        Idrcvt.convertToIdr(
+                                            count: int.parse(notconfirmed!
+                                                .dataTransaksi![index].nominal
+                                                .toString()),
+                                            decimalDigit: 2) +
+                                        " Telah ikonfirmasi",
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey)),
+                                trailing: Icon(Icons.arrow_forward_ios_rounded),
+                                leading: Container(
+                                    decoration: BoxDecoration(
+                                        color:
+                                            Color.fromARGB(255, 218, 236, 242),
+                                        borderRadius: BorderRadius.circular(7)),
+                                    height: 60,
+                                    width: 60,
+                                    child: Center(
+                                      child: Icon(Icons.check),
+                                    )),
+                              ),
+                            )
+                          ]);
+                        } else {
+                          return Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: boxcolor,
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color.fromARGB(37, 0, 0, 0),
+                                  spreadRadius: 2,
+                                  blurRadius: 7,
+                                  offset: Offset(
+                                      0, 3), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          KonfirmasiTopupDetailAdmin(
+                                        dataTransaksi:
+                                            notconfirmed!.dataTransaksi![index],
+                                      ),
+                                    ));
+                              },
+                              title: Text(
+                                notconfirmed!
+                                    .dataTransaksi![index].users!.username
+                                    .toString(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: surfacecolor),
+                              ),
+                              subtitle: Text(
                                 "Top-up " +
                                     Idrcvt.convertToIdr(
                                         count: int.parse(notconfirmed!
@@ -480,81 +576,41 @@ class _KonfirmasiTOPUPSaldoState extends State<KonfirmasiTOPUPSaldo> {
                                             .toString()),
                                         decimalDigit: 2) +
                                     " Telah ikonfirmasi",
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey)),
-                            trailing: Icon(Icons.arrow_forward_ios_rounded),
-                            leading: Container(
-                                decoration: BoxDecoration(
-                                    color: Color.fromARGB(255, 218, 236, 242),
-                                    borderRadius: BorderRadius.circular(7)),
-                                height: 60,
-                                width: 60,
-                                child: Center(
-                                  child: Icon(Icons.check),
-                                )),
-                          ),
-                        )
-                      ]);
-                    } else {
-                      return Container(
-                        margin:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: boxcolor,
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color.fromARGB(37, 0, 0, 0),
-                              spreadRadius: 2,
-                              blurRadius: 7,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
+                                style:
+                                    TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                              trailing: Icon(Icons.arrow_forward_ios_rounded),
+                              leading: Container(
+                                  decoration: BoxDecoration(
+                                      color: Color.fromARGB(255, 218, 236, 242),
+                                      borderRadius: BorderRadius.circular(7)),
+                                  height: 60,
+                                  width: 60,
+                                  child: Center(
+                                    child: Icon(Icons.check),
+                                  )),
                             ),
-                          ],
-                        ),
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      KonfirmasiTopupDetailAdmin(
-                                    dataTransaksi:
-                                        notconfirmed!.dataTransaksi![index],
-                                  ),
-                                ));
-                          },
-                          title: Text(
-                            notconfirmed!.dataTransaksi![index].users!.username
-                                .toString(),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: surfacecolor),
+                          );
+                        }
+                      })
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 150,
                           ),
-                          subtitle: Text(
-                            "Top-up " +
-                                Idrcvt.convertToIdr(
-                                    count: int.parse(notconfirmed!
-                                        .dataTransaksi![index].nominal
-                                        .toString()),
-                                    decimalDigit: 2) +
-                                " Telah ikonfirmasi",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          SvgPicture.asset("Asset/Svg/nodata.svg"),
+                          SizedBox(
+                            height: 20,
                           ),
-                          trailing: Icon(Icons.arrow_forward_ios_rounded),
-                          leading: Container(
-                              decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 218, 236, 242),
-                                  borderRadius: BorderRadius.circular(7)),
-                              height: 60,
-                              width: 60,
-                              child: Center(
-                                child: Icon(Icons.check),
-                              )),
-                        ),
-                      );
-                    }
-                  }),
+                          Text(
+                            "Tidak ada permintaan yang telah dikonfirmasi...",
+                            style: TextStyle(color: hinttext),
+                          ),
+                        ],
+                      ),
+                    )
             ],
           ),
         ],

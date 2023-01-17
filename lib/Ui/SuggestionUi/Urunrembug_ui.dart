@@ -13,6 +13,7 @@ import 'package:e_villlage/Ui/Widget/ErrorWidget.dart';
 import 'package:e_villlage/Ui/Widget/LoadWidget.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -176,316 +177,320 @@ class _SugestionScreenState extends State<SugestionScreen> {
                             child: Column(
                               children: [
                                 Container(
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: rembugData!.rembug!.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Container(
-                                        margin: const EdgeInsets.only(
-                                          top: 15,
-                                        ),
-                                        width: 315,
-                                        decoration: BoxDecoration(
-                                          boxShadow: const [
-                                            BoxShadow(
-                                              color:
-                                                  Color.fromARGB(37, 0, 0, 0),
-                                              spreadRadius: 2,
-                                              blurRadius: 7,
-                                              offset: Offset(0,
-                                                  3), // changes position of shadow
-                                            ),
-                                          ],
-                                          color: boxcolor,
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    width: 35,
-                                                    child: Expanded(
-                                                      child: Container(
-                                                        height: 35,
-                                                        width: 35,
-                                                        decoration: BoxDecoration(
-                                                            image: DecorationImage(
-                                                                image: NetworkImage(
-                                                                    rembugData!
-                                                                        .rembug![
-                                                                            index]
-                                                                        .users!
-                                                                        .imageUser
-                                                                        .toString()),
-                                                                fit: BoxFit
-                                                                    .cover),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        100),
-                                                            color: Colors.grey),
-                                                      ),
+                                    child: rembugData!.rembug!.length > 0
+                                        ? ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemCount:
+                                                rembugData!.rembug!.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return Container(
+                                                margin: const EdgeInsets.only(
+                                                  top: 15,
+                                                ),
+                                                width: 315,
+                                                decoration: BoxDecoration(
+                                                  boxShadow: const [
+                                                    BoxShadow(
+                                                      color: Color.fromARGB(
+                                                          37, 0, 0, 0),
+                                                      spreadRadius: 2,
+                                                      blurRadius: 7,
+                                                      offset: Offset(0,
+                                                          3), // changes position of shadow
                                                     ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Container(
-                                                      margin: EdgeInsets.only(
-                                                          left: 10),
-                                                      child: Text(
-                                                        rembugData!
-                                                            .rembug![index]
-                                                            .users!
-                                                            .username
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            color: surfacecolor,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          formatTglIndo(
-                                                                      date: rembugData!
-                                                                          .rembug![
-                                                                              index]
-                                                                          .createdDate
-                                                                          .toString()) ==
-                                                                  datenow
-                                                                      .toString()
-                                                              ? "Hari ini"
-                                                              : daykmrin(date: rembugData!.rembug![index].createdDate.toString())
-                                                                              .toString() +
-                                                                          formatBulanIndo(
-                                                                              date: rembugData!.rembug![index].createdDate
-                                                                                  .toString()) ==
-                                                                      daynow.toString() +
-                                                                          datenow2
-                                                                              .toString()
-                                                                  ? "Kemarin"
-                                                                  : formatTglIndo(
-                                                                      date: rembugData!
-                                                                          .rembug![
-                                                                              index]
-                                                                          .createdDate
-                                                                          .toString()),
-                                                          style: TextStyle(
-                                                              fontSize: 8,
-                                                              color:
-                                                                  Colors.grey,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                        PopupMenuButton(
-                                                            icon: Icon(
-                                                              Icons
-                                                                  .more_vert_rounded,
-                                                              color:
-                                                                  surfacecolor,
-                                                            ),
-                                                            itemBuilder:
-                                                                (context) {
-                                                              return [
-                                                                PopupMenuItem<
-                                                                    int>(
-                                                                  value: 0,
-                                                                  child: Text(
-                                                                      "Laporkan"),
-                                                                ),
-                                                              ];
-                                                            },
-                                                            onSelected:
-                                                                (value) {
-                                                              if (value == 0) {
-                                                                showDialog(
-                                                                  context:
-                                                                      context,
-                                                                  builder:
-                                                                      (context) {
-                                                                    return AlertDialog(
-                                                                        title: Text(
-                                                                            "Masukkan deskripsi laporan"),
-                                                                        actions: [
-                                                                          TextButton(
-                                                                              onPressed: () {
-                                                                                Navigator.pop(context);
-                                                                              },
-                                                                              child: Text("Batal")),
-                                                                          TextButton(
-                                                                              onPressed: () {
-                                                                                setState(() {
-                                                                                  Navigator.pop(context);
-                                                                                  isload = true;
-                                                                                  _postreport(deskripsi: deskripsitxt.text, id_post: rembugData!.rembug![index].id.toString(), id_user_posts: rembugData!.rembug![index].users!.id.toString());
-                                                                                });
-                                                                              },
-                                                                              child: Text(
-                                                                                "Report",
-                                                                                style: TextStyle(color: Colors.red),
-                                                                              ))
-                                                                        ],
-                                                                        content:
-                                                                            TextFormField(
-                                                                          controller:
-                                                                              deskripsitxt,
-                                                                        ));
-                                                                  },
-                                                                );
-                                                              }
-                                                            })
-                                                      ],
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              padding: EdgeInsets.all(20),
-                                              child: Column(
-                                                children: [
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                    child: Text(
-                                                      rembugData!.rembug![index]
-                                                          .deskripsi
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color: surfacecolor),
-                                                    ),
-                                                  ),
-                                                  rembugData!.rembug![index]
-                                                              .image !=
-                                                          null
-                                                      ? Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 20),
-                                                          height: 135,
-                                                          width: 300,
-                                                          decoration: BoxDecoration(
-                                                              image: DecorationImage(
-                                                                  image: NetworkImage(rembugData!
-                                                                      .rembug![
-                                                                          index]
-                                                                      .image
-                                                                      .toString()),
-                                                                  fit: BoxFit
-                                                                      .cover),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              color:
-                                                                  Colors.grey),
-                                                        )
-                                                      : Container(),
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 20),
-                                                    child: Row(
-                                                      children: [
-                                                        Expanded(
-                                                          child: Row(
-                                                            children: [
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                CommentUrunRembugUI(rembug: rembugData!.rembug![index]),
-                                                                      ));
-                                                                },
-                                                                child: Row(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons
-                                                                          .reply_all,
-                                                                      size: 22,
-                                                                      color:
-                                                                          accentcolor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      rembugData!
-                                                                          .rembug![
-                                                                              index]
-                                                                          .commentsCount
-                                                                          .toString(),
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              accentcolor),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .end,
-                                                            children: [
-                                                              Text(
-                                                                formatJamIndo(
-                                                                    date: rembugData!
-                                                                        .rembug![
-                                                                            index]
-                                                                        .createdDate
-                                                                        .toString()),
-                                                                style: TextStyle(
-                                                                    fontSize: 8,
+                                                  ],
+                                                  color: boxcolor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
+                                                child: Column(
+                                                  children: [
+                                                    Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              top: 20,
+                                                              left: 20),
+                                                      child: Row(
+                                                        children: [
+                                                          Container(
+                                                            width: 35,
+                                                            child: Expanded(
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
+                                                                    image: DecorationImage(
+                                                                        image: NetworkImage(rembugData!
+                                                                            .rembug![
+                                                                                index]
+                                                                            .users!
+                                                                            .imageUser
+                                                                            .toString()),
+                                                                        fit: BoxFit
+                                                                            .cover),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            100),
                                                                     color: Colors
-                                                                        .grey,
+                                                                        .grey),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            flex: 1,
+                                                            child: Container(
+                                                              margin: EdgeInsets
+                                                                  .only(
+                                                                      left: 10),
+                                                              child: Text(
+                                                                rembugData!
+                                                                    .rembug![
+                                                                        index]
+                                                                    .users!
+                                                                    .username
+                                                                    .toString(),
+                                                                style: TextStyle(
+                                                                    color:
+                                                                        surfacecolor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold),
                                                               ),
-                                                            ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
+                                                          Expanded(
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .end,
+                                                              children: [
+                                                                Text(
+                                                                  formatTglIndo(date: rembugData!.rembug![index].createdDate.toString()) ==
+                                                                          datenow
+                                                                              .toString()
+                                                                      ? "Hari ini"
+                                                                      : daykmrin(date: rembugData!.rembug![index].createdDate.toString()).toString() + formatBulanIndo(date: rembugData!.rembug![index].createdDate.toString()) ==
+                                                                              daynow.toString() + datenow2.toString()
+                                                                          ? "Kemarin"
+                                                                          : formatTglIndo(date: rembugData!.rembug![index].createdDate.toString()),
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          8,
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                                PopupMenuButton(
+                                                                    icon: Icon(
+                                                                      Icons
+                                                                          .more_vert_rounded,
+                                                                      color:
+                                                                          surfacecolor,
+                                                                    ),
+                                                                    itemBuilder:
+                                                                        (context) {
+                                                                      return [
+                                                                        PopupMenuItem<
+                                                                            int>(
+                                                                          value:
+                                                                              0,
+                                                                          child:
+                                                                              Text("Laporkan"),
+                                                                        ),
+                                                                      ];
+                                                                    },
+                                                                    onSelected:
+                                                                        (value) {
+                                                                      if (value ==
+                                                                          0) {
+                                                                        showDialog(
+                                                                          context:
+                                                                              context,
+                                                                          builder:
+                                                                              (context) {
+                                                                            return AlertDialog(
+                                                                                title: Text("Masukkan deskripsi laporan"),
+                                                                                actions: [
+                                                                                  TextButton(
+                                                                                      onPressed: () {
+                                                                                        Navigator.pop(context);
+                                                                                      },
+                                                                                      child: Text("Batal")),
+                                                                                  TextButton(
+                                                                                      onPressed: () {
+                                                                                        setState(() {
+                                                                                          Navigator.pop(context);
+                                                                                          isload = true;
+                                                                                          _postreport(deskripsi: deskripsitxt.text, id_post: rembugData!.rembug![index].id.toString(), id_user_posts: rembugData!.rembug![index].users!.id.toString());
+                                                                                        });
+                                                                                      },
+                                                                                      child: Text(
+                                                                                        "Report",
+                                                                                        style: TextStyle(color: Colors.red),
+                                                                                      ))
+                                                                                ],
+                                                                                content: TextFormField(
+                                                                                  controller: deskripsitxt,
+                                                                                ));
+                                                                          },
+                                                                        );
+                                                                      }
+                                                                    })
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
                                                     ),
-                                                  )
-                                                ],
-                                              ),
+                                                    Container(
+                                                      padding:
+                                                          EdgeInsets.all(20),
+                                                      child: Column(
+                                                        children: [
+                                                          Container(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                            child: Text(
+                                                              rembugData!
+                                                                  .rembug![
+                                                                      index]
+                                                                  .deskripsi
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  fontSize: 12,
+                                                                  color:
+                                                                      surfacecolor),
+                                                            ),
+                                                          ),
+                                                          rembugData!
+                                                                      .rembug![
+                                                                          index]
+                                                                      .image !=
+                                                                  null
+                                                              ? Container(
+                                                                  margin: const EdgeInsets
+                                                                          .only(
+                                                                      top: 20),
+                                                                  height: 135,
+                                                                  width: 300,
+                                                                  decoration: BoxDecoration(
+                                                                      image: DecorationImage(
+                                                                          image: NetworkImage(rembugData!
+                                                                              .rembug![
+                                                                                  index]
+                                                                              .image
+                                                                              .toString()),
+                                                                          fit: BoxFit
+                                                                              .cover),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                      color: Colors
+                                                                          .grey),
+                                                                )
+                                                              : Container(),
+                                                          Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 20),
+                                                            child: Row(
+                                                              children: [
+                                                                Expanded(
+                                                                  child: Row(
+                                                                    children: [
+                                                                      InkWell(
+                                                                        onTap:
+                                                                            () {
+                                                                          Navigator.push(
+                                                                              context,
+                                                                              MaterialPageRoute(
+                                                                                builder: (context) => CommentUrunRembugUI(rembug: rembugData!.rembug![index]),
+                                                                              ));
+                                                                        },
+                                                                        child:
+                                                                            Row(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.center,
+                                                                          children: [
+                                                                            Icon(
+                                                                              Icons.reply_all,
+                                                                              size: 22,
+                                                                              color: accentcolor,
+                                                                            ),
+                                                                            SizedBox(
+                                                                              width: 10,
+                                                                            ),
+                                                                            Text(
+                                                                              rembugData!.rembug![index].commentsCount.toString(),
+                                                                              style: TextStyle(color: accentcolor),
+                                                                            )
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .end,
+                                                                    children: [
+                                                                      Text(
+                                                                        formatJamIndo(
+                                                                            date:
+                                                                                rembugData!.rembug![index].createdDate.toString()),
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                8,
+                                                                            color:
+                                                                                Colors.grey,
+                                                                            fontWeight: FontWeight.bold),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          )
+                                        : Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  height: 150,
+                                                ),
+                                                SvgPicture.asset(
+                                                    "Asset/Svg/nodatarembug.svg"),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Text(
+                                                  "Saat ini belum ada urun rembug...",
+                                                  style: TextStyle(
+                                                      color: hinttext),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
+                                          )),
                               ],
                             ),
                           ),

@@ -56,6 +56,9 @@ class _AccountScreenState extends State<AccountScreen> {
                     (route) => false)
               });
         } else {
+          setState(() {
+            isload = false;
+          });
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text('${res.error}')));
         }
@@ -67,6 +70,9 @@ class _AccountScreenState extends State<AccountScreen> {
                 (route) => false)
           });
     } else {
+      setState(() {
+        isload = false;
+      });
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('${response.error}')));
     }

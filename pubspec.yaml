@@ -42,6 +42,7 @@ dependencies:
   http: ^0.13.5
   image_picker: ^0.8.6
   inner_shadow_widget: ^0.0.3
+  internet_connection_checker: ^0.0.1+4
   intl: 
   month_year_picker: ^0.2.0+3
   pin_code_fields: ^7.4.0

@@ -11,6 +11,7 @@ import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/LoadWidget.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 
 class LaporanPengeluaran extends StatefulWidget {
@@ -75,89 +76,114 @@ class _LaporanPDAMState extends State<LaporanPengeluaran> {
           : ListView(
               children: [
                 Container(
-                  margin: EdgeInsets.only(left: 20, right: 20, top: 20),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 20,
-                      ),
-                      DataTable(
-                          horizontalMargin: 0,
-                          columnSpacing: 10,
-                          columns: [
-                            DataColumn(
-                                label: Container(
-                              width: 100,
-                              child: Text('Tanggal',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: surfacecolor)),
-                            )),
-                            DataColumn(
-                                label: Container(
-                              width: 100,
-                              child: Text('Nominal',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: surfacecolor)),
-                            )),
-                            DataColumn(
-                                label: Container(
-                              width: 100,
-                              child: Text('Keperluan',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: surfacecolor)),
-                            )),
-                          ],
-                          rows: List.generate(
-                              laporanAdminModel!.laporan!.length,
-                              (index) => DataRow(
-                                      onLongPress: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DetailPengeluaran(
-                                                        laporan:
-                                                            laporanAdminModel!
+                    margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+                    child: laporanAdminModel!.laporan!.length > 0
+                        ? Column(
+                            children: [
+                              SizedBox(
+                                height: 20,
+                              ),
+                              DataTable(
+                                  horizontalMargin: 0,
+                                  columnSpacing: 10,
+                                  columns: [
+                                    DataColumn(
+                                        label: Container(
+                                      width: 100,
+                                      child: Text('Tanggal',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: surfacecolor)),
+                                    )),
+                                    DataColumn(
+                                        label: Container(
+                                      width: 100,
+                                      child: Text('Nominal',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: surfacecolor)),
+                                    )),
+                                    DataColumn(
+                                        label: Container(
+                                      width: 100,
+                                      child: Text('Keperluan',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: surfacecolor)),
+                                    )),
+                                  ],
+                                  rows: List.generate(
+                                      laporanAdminModel!.laporan!.length,
+                                      (index) => DataRow(
+                                              onLongPress: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            DetailPengeluaran(
+                                                                laporan: laporanAdminModel!
+                                                                        .laporan![
+                                                                    index])));
+                                              },
+                                              cells: [
+                                                DataCell(Container(
+                                                    width: 100,
+                                                    child: Text(
+                                                        formatTglIndo(
+                                                            date:
+                                                                laporanAdminModel!
                                                                     .laporan![
-                                                                index])));
-                                      },
-                                      cells: [
-                                        DataCell(Container(
-                                            width: 100,
-                                            child: Text(
-                                                formatTglIndo(
-                                                    date: laporanAdminModel!
-                                                        .laporan![index].date
-                                                        .toString()),
-                                                style: TextStyle(
-                                                    color: surfacecolor)))),
-                                        DataCell(Container(
-                                            width: 100,
-                                            child: Text(
-                                                Idrcvt.convertToIdr(
-                                                    count: int.parse(
+                                                                        index]
+                                                                    .date
+                                                                    .toString()),
+                                                        style: TextStyle(
+                                                            color:
+                                                                surfacecolor)))),
+                                                DataCell(Container(
+                                                    width: 100,
+                                                    child: Text(
+                                                        Idrcvt.convertToIdr(
+                                                            count: int.parse(
+                                                                laporanAdminModel!
+                                                                    .laporan![
+                                                                        index]
+                                                                    .nominal
+                                                                    .toString()),
+                                                            decimalDigit: 2),
+                                                        style: TextStyle(
+                                                            color:
+                                                                surfacecolor)))),
+                                                DataCell(Container(
+                                                    width: 100,
+                                                    child: Text(
                                                         laporanAdminModel!
                                                             .laporan![index]
-                                                            .nominal
-                                                            .toString()),
-                                                    decimalDigit: 2),
-                                                style: TextStyle(
-                                                    color: surfacecolor)))),
-                                        DataCell(Container(
-                                            width: 100,
-                                            child: Text(
-                                                laporanAdminModel!
-                                                    .laporan![index].keperluan
-                                                    .toString(),
-                                                style: TextStyle(
-                                                    color: surfacecolor)))),
-                                      ])))
-                    ],
-                  ),
-                )
+                                                            .keperluan
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            color:
+                                                                surfacecolor)))),
+                                              ])))
+                            ],
+                          )
+                        : Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 150,
+                                ),
+                                SvgPicture.asset("Asset/Svg/nodata.svg"),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  "Admin belum melakukan pengeluaran...",
+                                  style: TextStyle(color: hinttext),
+                                ),
+                              ],
+                            ),
+                          ))
               ],
             ),
     );

@@ -78,12 +78,16 @@ class _PrivasiSettingsState extends State<PrivasiSettings> {
                       ],
                     ),
                     child: ListTile(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        final reLoadPage = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => Currentpinupdate(),
                             ));
+                        if (!mounted) return;
+                        setState(() {
+                          getsettings();
+                        });
                       },
                       trailing: Icon(
                         Icons.arrow_forward_ios_rounded,
@@ -115,12 +119,16 @@ class _PrivasiSettingsState extends State<PrivasiSettings> {
                       ],
                     ),
                     child: ListTile(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        final reLoadPage = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => PasswordUpdate(),
                             ));
+                        if (!mounted) return;
+                        setState(() {
+                          getsettings();
+                        });
                       },
                       trailing: Icon(
                         Icons.arrow_forward_ios_rounded,
