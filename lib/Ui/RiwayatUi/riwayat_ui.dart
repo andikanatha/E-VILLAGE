@@ -25,27 +25,75 @@ class RiwayatScreen extends StatefulWidget {
 }
 
 class _RiwayatScreenState extends State<RiwayatScreen> {
+  TextEditingController pembayaranquery = TextEditingController();
+  TextEditingController pemasukanquery = TextEditingController();
   PembayaranModelGet? pembayaranModelGet;
   PembayaranModelGet? getpemasukan;
   ModelLapor? modelLapor;
   bool isload = true;
+  bool isloaddata = false;
   bool themee = false;
+  String querypembayaran = "";
+  String querypemasukan = "";
 
   void getdata() async {
     bool theme = await getisDarkTheme();
     int id = await getUserid();
     String token = await getToken();
-    final responsepembayaran = await http
-        .get(Uri.parse(baseurl_evillageapi + "/api/user/transaksi"), headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token'
-    });
-    final responsepemasukan = await http.get(
-        Uri.parse(baseurl_evillageapi + "/api/user/transaksi/pemasukan"),
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
+
+    if (querypembayaran != "") {
+      final responsepembayaransearch = await http.get(
+          Uri.parse(baseurl_evillageapi +
+              "/api/user/transaksi/" +
+              querypembayaran.toString()),
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
+          });
+
+      setState(() {
+        pembayaranModelGet = PembayaranModelGet.fromJson(
+            json.decode(responsepembayaransearch.body.toString()));
+      });
+    } else {
+      final responsepembayaran = await http.get(
+          Uri.parse(baseurl_evillageapi + "/api/user/transaksi"),
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
+          });
+      setState(() {
+        pembayaranModelGet = PembayaranModelGet.fromJson(
+            json.decode(responsepembayaran.body.toString()));
+      });
+    }
+
+    if (querypemasukan != "") {
+      final responsepemasukansrc = await http.get(
+          Uri.parse(baseurl_evillageapi +
+              "/api/user/pemasukan/" +
+              querypemasukan.toString()),
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
+          });
+      setState(() {
+        getpemasukan = PembayaranModelGet.fromJson(
+            json.decode(responsepemasukansrc.body.toString()));
+      });
+    } else {
+      final responsepemasukan = await http.get(
+          Uri.parse(baseurl_evillageapi + "/api/user/transaksi/pemasukan"),
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
+          });
+      setState(() {
+        getpemasukan = PembayaranModelGet.fromJson(
+            json.decode(responsepemasukan.body.toString()));
+      });
+    }
+
     final responsereport = await http.get(
         Uri.parse(baseurl_evillageapi + "/api/user/report/" + id.toString()),
         headers: {
@@ -53,23 +101,19 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
           'Authorization': 'Bearer $token'
         });
 
-    getpemasukan = PembayaranModelGet.fromJson(
-        json.decode(responsepemasukan.body.toString()));
-    pembayaranModelGet = PembayaranModelGet.fromJson(
-        json.decode(responsepembayaran.body.toString()));
     modelLapor =
         ModelLapor.fromJson(json.decode(responsereport.body.toString()));
 
     setState(() {
       themee = theme;
       isload = false;
+      isloaddata = false;
     });
   }
 
   @override
   void initState() {
     getdata();
-    // TODO: implement initState
     super.initState();
   }
 
@@ -165,6 +209,28 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                 height: 50,
                 margin: EdgeInsets.only(top: 15, left: 20, right: 20),
                 child: TextFormField(
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime.now());
+
+                      if (pickedDate != null) {
+                        setState(() {
+                          String formattedDate =
+                              DateFormat('yyyy-MM-dd').format(pickedDate);
+                          querypembayaran = formattedDate;
+                          pembayaranquery.text =
+                              formatTglIndo(date: pickedDate.toString());
+                          isloaddata = true;
+                          getdata();
+                        });
+                      } else {}
+                    },
+                    style: TextStyle(color: surfacecolor),
+                    controller: pembayaranquery,
                     validator: (val) => val!.isEmpty ? '' : null,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -174,199 +240,219 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                             style: BorderStyle.none,
                           ),
                         ),
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                pembayaranquery.text = "";
+                                querypembayaran = "";
+                                isloaddata = true;
+                                getdata();
+                              });
+                            },
+                            icon: Icon(
+                              Icons.cancel,
+                              color: surfacecolor,
+                            )),
                         filled: true,
                         fillColor: inputtxtbg,
                         hintStyle: GoogleFonts.poppins(
-                            fontSize: 12, color: surfacecolor),
+                          fontSize: 12,
+                          color: hinttext,
+                        ),
                         prefixIcon: Icon(
                           Icons.search,
                           color: surfacecolor,
                         ),
-                        hintText: 'Anda ingin mencari apa?')),
+                        hintText: 'Pilih tanggal yang ingin anda cari...')),
               ),
               SizedBox(
                 height: 20,
               ),
-              ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: pembayaranModelGet!.dataTransaksi!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    bool isSameDate = true;
-                    final String dateString = pembayaranModelGet!
-                        .dataTransaksi![index].trxDate
-                        .toString();
-                    final DateTime date = DateTime.parse(dateString);
-                    final item = pembayaranModelGet!.dataTransaksi![index];
-                    if (index == 0) {
-                      isSameDate = false;
-                    } else {
-                      final String prevDateString = pembayaranModelGet!
-                          .dataTransaksi![index - 1].trxDate
-                          .toString();
-                      final DateTime prevDate = DateTime.parse(prevDateString);
-                      isSameDate = date.isSameDate(prevDate);
-                    }
-                    if (index == 0 || !(isSameDate)) {
-                      return Column(children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            children: [
-                              Text(
-                                formatTglIndo(date: dateString),
+              pembayaranModelGet!.dataTransaksi!.length > 0
+                  ? ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: pembayaranModelGet!.dataTransaksi!.length,
+                      itemBuilder: (BuildContext context, int idx) {
+                        bool isSameDate = true;
+                        final String dateString = pembayaranModelGet!
+                            .dataTransaksi![idx].trxDate
+                            .toString();
+                        final DateTime date = DateTime.parse(dateString);
+                        final item = pembayaranModelGet!.dataTransaksi![idx];
+                        if (idx == 0) {
+                          isSameDate = false;
+                        } else {
+                          final String prevDateString = pembayaranModelGet!
+                              .dataTransaksi![idx - 1].trxDate
+                              .toString();
+                          final DateTime prevDate =
+                              DateTime.parse(prevDateString);
+                          isSameDate = date.isSameDate(prevDate);
+                        }
+                        if (idx == 0 || !(isSameDate)) {
+                          return Column(children: [
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    formatTglIndo(date: dateString),
+                                    style: TextStyle(color: surfacecolor),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: boxcolor,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color.fromARGB(37, 0, 0, 0),
+                                    spreadRadius: 2,
+                                    blurRadius: 7,
+                                    offset: Offset(
+                                        0, 3), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Detailpembayaran(
+                                            id: int.parse(pembayaranModelGet!
+                                                .dataTransaksi![idx].id
+                                                .toString())),
+                                      ));
+                                },
+                                title: Text(
+                                  pembayaranModelGet!
+                                      .dataTransaksi![idx].trxName
+                                      .toString(),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: surfacecolor),
+                                ),
+                                subtitle: Text(
+                                  Idrcvt.convertToIdr(
+                                      count: int.parse(pembayaranModelGet!
+                                          .dataTransaksi![idx].totalTrx
+                                          .toString()),
+                                      decimalDigit: 2),
+                                  style: TextStyle(color: surfacecolor),
+                                ),
+                                trailing: Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  color: accentcolor,
+                                ),
+                                leading: Container(
+                                    decoration: BoxDecoration(
+                                        color: themee
+                                            ? secondarycolor
+                                            : Color.fromARGB(
+                                                255, 218, 236, 242),
+                                        borderRadius: BorderRadius.circular(7)),
+                                    height: 60,
+                                    width: 60,
+                                    child: Center(
+                                      child: Icon(
+                                        pembayaranModelGet!
+                                                    .dataTransaksi![idx].status
+                                                    .toString() ==
+                                                "Berhasil"
+                                            ? Icons.check
+                                            : Icons.report,
+                                        color: pembayaranModelGet!
+                                                    .dataTransaksi![idx].status
+                                                    .toString() ==
+                                                "Berhasil"
+                                            ? Color.fromARGB(255, 130, 222, 255)
+                                            : Colors.red,
+                                      ),
+                                    )),
+                              ),
+                            )
+                          ]);
+                        } else {
+                          return Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: boxcolor,
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color.fromARGB(37, 0, 0, 0),
+                                  spreadRadius: 2,
+                                  blurRadius: 7,
+                                  offset: Offset(
+                                      0, 3), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Detailpembayaran(
+                                          id: int.parse(pembayaranModelGet!
+                                              .dataTransaksi![idx].id
+                                              .toString())),
+                                    ));
+                              },
+                              title: Text(
+                                pembayaranModelGet!.dataTransaksi![idx].trxName
+                                    .toString(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: surfacecolor),
+                              ),
+                              subtitle: Text(
+                                Idrcvt.convertToIdr(
+                                    count: int.parse(pembayaranModelGet!
+                                        .dataTransaksi![idx].totalTrx
+                                        .toString()),
+                                    decimalDigit: 2),
                                 style: TextStyle(color: surfacecolor),
                               ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: boxcolor,
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color.fromARGB(37, 0, 0, 0),
-                                spreadRadius: 2,
-                                blurRadius: 7,
-                                offset:
-                                    Offset(0, 3), // changes position of shadow
+                              trailing: Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: accentcolor,
                               ),
-                            ],
-                          ),
-                          child: ListTile(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Detailpembayaran(
-                                        id: int.parse(pembayaranModelGet!
-                                            .dataTransaksi![index].id
-                                            .toString())),
-                                  ));
-                            },
-                            title: Text(
-                              pembayaranModelGet!.dataTransaksi![index].trxName
-                                  .toString(),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: surfacecolor),
+                              leading: Container(
+                                  decoration: BoxDecoration(
+                                      color: themee
+                                          ? secondarycolor
+                                          : Color.fromARGB(255, 218, 236, 242),
+                                      borderRadius: BorderRadius.circular(7)),
+                                  height: 60,
+                                  width: 60,
+                                  child: Center(
+                                    child: Icon(
+                                        pembayaranModelGet!
+                                                    .dataTransaksi![idx].status
+                                                    .toString() ==
+                                                "Berhasil"
+                                            ? Icons.check
+                                            : Icons.report,
+                                        color: pembayaranModelGet!
+                                                    .dataTransaksi![idx].status
+                                                    .toString() ==
+                                                "Berhasil"
+                                            ? Color.fromARGB(255, 130, 222, 255)
+                                            : Colors.red),
+                                  )),
                             ),
-                            subtitle: Text(
-                              Idrcvt.convertToIdr(
-                                  count: int.parse(pembayaranModelGet!
-                                      .dataTransaksi![index].totalTrx
-                                      .toString()),
-                                  decimalDigit: 2),
-                              style: TextStyle(color: surfacecolor),
-                            ),
-                            trailing: Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: accentcolor,
-                            ),
-                            leading: Container(
-                                decoration: BoxDecoration(
-                                    color: themee
-                                        ? secondarycolor
-                                        : Color.fromARGB(255, 218, 236, 242),
-                                    borderRadius: BorderRadius.circular(7)),
-                                height: 60,
-                                width: 60,
-                                child: Center(
-                                  child: Icon(
-                                    pembayaranModelGet!
-                                                .dataTransaksi![index].status
-                                                .toString() ==
-                                            "Berhasil"
-                                        ? Icons.check
-                                        : Icons.report,
-                                    color: pembayaranModelGet!
-                                                .dataTransaksi![index].status
-                                                .toString() ==
-                                            "Berhasil"
-                                        ? Color.fromARGB(255, 130, 222, 255)
-                                        : Colors.red,
-                                  ),
-                                )),
-                          ),
-                        )
-                      ]);
-                    } else {
-                      return Container(
-                        margin:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: boxcolor,
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color.fromARGB(37, 0, 0, 0),
-                              spreadRadius: 2,
-                              blurRadius: 7,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Detailpembayaran(
-                                      id: int.parse(pembayaranModelGet!
-                                          .dataTransaksi![index].id
-                                          .toString())),
-                                ));
-                          },
-                          title: Text(
-                            pembayaranModelGet!.dataTransaksi![index].trxName
-                                .toString(),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: surfacecolor),
-                          ),
-                          subtitle: Text(
-                            Idrcvt.convertToIdr(
-                                count: int.parse(pembayaranModelGet!
-                                    .dataTransaksi![index].totalTrx
-                                    .toString()),
-                                decimalDigit: 2),
-                            style: TextStyle(color: surfacecolor),
-                          ),
-                          trailing: Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: accentcolor,
-                          ),
-                          leading: Container(
-                              decoration: BoxDecoration(
-                                  color: themee
-                                      ? secondarycolor
-                                      : Color.fromARGB(255, 218, 236, 242),
-                                  borderRadius: BorderRadius.circular(7)),
-                              height: 60,
-                              width: 60,
-                              child: Center(
-                                child: Icon(
-                                    pembayaranModelGet!
-                                                .dataTransaksi![index].status
-                                                .toString() ==
-                                            "Berhasil"
-                                        ? Icons.check
-                                        : Icons.report,
-                                    color: pembayaranModelGet!
-                                                .dataTransaksi![index].status
-                                                .toString() ==
-                                            "Berhasil"
-                                        ? Color.fromARGB(255, 130, 222, 255)
-                                        : Colors.red),
-                              )),
-                        ),
-                      );
-                    }
-                  }),
+                          );
+                        }
+                      })
+                  : Text("Tidak ditemukan data"),
             ],
           ),
         ],
@@ -389,6 +475,28 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                 height: 50,
                 margin: EdgeInsets.only(top: 15, left: 20, right: 20),
                 child: TextFormField(
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime.now());
+
+                      if (pickedDate != null) {
+                        setState(() {
+                          String formattedDate =
+                              DateFormat('yyyy-MM-dd').format(pickedDate);
+                          querypemasukan = formattedDate;
+                          pemasukanquery.text =
+                              formatTglIndo(date: pickedDate.toString());
+                          isloaddata = true;
+                          getdata();
+                        });
+                      } else {}
+                    },
+                    style: TextStyle(color: surfacecolor),
+                    controller: pemasukanquery,
                     validator: (val) => val!.isEmpty ? '' : null,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -398,15 +506,30 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                             style: BorderStyle.none,
                           ),
                         ),
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                pemasukanquery.text = "";
+                                querypemasukan = "";
+                                isloaddata = true;
+                                getdata();
+                              });
+                            },
+                            icon: Icon(
+                              Icons.cancel,
+                              color: surfacecolor,
+                            )),
                         filled: true,
                         fillColor: inputtxtbg,
                         hintStyle: GoogleFonts.poppins(
-                            fontSize: 12, color: surfacecolor),
+                          fontSize: 12,
+                          color: hinttext,
+                        ),
                         prefixIcon: Icon(
                           Icons.search,
                           color: surfacecolor,
                         ),
-                        hintText: 'Anda ingin mencari apa?')),
+                        hintText: 'Pilih tanggal yang ingin anda cari...')),
               ),
               SizedBox(
                 height: 20,
@@ -415,22 +538,22 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: getpemasukan!.dataTransaksi!.length,
-                  itemBuilder: (BuildContext context, int index) {
+                  itemBuilder: (BuildContext context, int i) {
                     bool isSameDate = true;
                     final String dateString =
-                        getpemasukan!.dataTransaksi![index].trxDate.toString();
+                        getpemasukan!.dataTransaksi![i].trxDate.toString();
                     final DateTime date = DateTime.parse(dateString);
-                    final item = getpemasukan!.dataTransaksi![index];
-                    if (index == 0) {
+                    final item = getpemasukan!.dataTransaksi![i];
+                    if (i == 0) {
                       isSameDate = false;
                     } else {
                       final String prevDateString = getpemasukan!
-                          .dataTransaksi![index - 1].trxDate
+                          .dataTransaksi![i - 1].trxDate
                           .toString();
                       final DateTime prevDate = DateTime.parse(prevDateString);
                       isSameDate = date.isSameDate(prevDate);
                     }
-                    if (index == 0 || !(isSameDate)) {
+                    if (i == 0 || !(isSameDate)) {
                       return Column(children: [
                         Container(
                           margin: EdgeInsets.symmetric(horizontal: 20),
@@ -466,12 +589,12 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                                   MaterialPageRoute(
                                     builder: (context) => Detailpembayaran(
                                         id: int.parse(getpemasukan!
-                                            .dataTransaksi![index].id
+                                            .dataTransaksi![i].id
                                             .toString())),
                                   ));
                             },
                             title: Text(
-                              getpemasukan!.dataTransaksi![index].trxName
+                              getpemasukan!.dataTransaksi![i].trxName
                                   .toString(),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -480,7 +603,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                             subtitle: Text(
                               Idrcvt.convertToIdr(
                                   count: int.parse(getpemasukan!
-                                      .dataTransaksi![index].totalTrx
+                                      .dataTransaksi![i].totalTrx
                                       .toString()),
                                   decimalDigit: 2),
                               style: TextStyle(color: surfacecolor),
@@ -499,13 +622,13 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                                 width: 60,
                                 child: Center(
                                   child: Icon(
-                                      getpemasukan!.dataTransaksi![index].status
+                                      getpemasukan!.dataTransaksi![i].status
                                                   .toString() ==
                                               "Berhasil"
                                           ? Icons.check
                                           : Icons.report,
-                                      color: pembayaranModelGet!
-                                                  .dataTransaksi![index].status
+                                      color: getpemasukan!
+                                                  .dataTransaksi![i].status
                                                   .toString() ==
                                               "Berhasil"
                                           ? Color.fromARGB(255, 130, 222, 255)
@@ -538,13 +661,12 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                                 MaterialPageRoute(
                                   builder: (context) => Detailpembayaran(
                                       id: int.parse(getpemasukan!
-                                          .dataTransaksi![index].id
+                                          .dataTransaksi![i].id
                                           .toString())),
                                 ));
                           },
                           title: Text(
-                            getpemasukan!.dataTransaksi![index].trxName
-                                .toString(),
+                            getpemasukan!.dataTransaksi![i].trxName.toString(),
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: surfacecolor),
@@ -552,7 +674,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                           subtitle: Text(
                             Idrcvt.convertToIdr(
                                 count: int.parse(getpemasukan!
-                                    .dataTransaksi![index].totalTrx
+                                    .dataTransaksi![i].totalTrx
                                     .toString()),
                                 decimalDigit: 2),
                             style: TextStyle(color: surfacecolor),
@@ -571,13 +693,13 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                               width: 60,
                               child: Center(
                                 child: Icon(
-                                    getpemasukan!.dataTransaksi![index].status
+                                    getpemasukan!.dataTransaksi![i].status
                                                 .toString() ==
                                             "Berhasil"
                                         ? Icons.check
                                         : Icons.report,
-                                    color: pembayaranModelGet!
-                                                .dataTransaksi![index].status
+                                    color: getpemasukan!
+                                                .dataTransaksi![i].status
                                                 .toString() ==
                                             "Berhasil"
                                         ? Color.fromARGB(255, 130, 222, 255)

@@ -237,7 +237,7 @@ class _SugestionScreenState extends State<KelolaUrunRembug> {
                                                             .username
                                                             .toString(),
                                                         style: TextStyle(
-                                                            color: accentcolor,
+                                                            color: surfacecolor,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold),
@@ -287,7 +287,7 @@ class _SugestionScreenState extends State<KelolaUrunRembug> {
                                                               Icons
                                                                   .more_vert_rounded,
                                                               color:
-                                                                  accentcolor,
+                                                                  surfacecolor,
                                                             ),
                                                             itemBuilder:
                                                                 (context) {
@@ -349,7 +349,7 @@ class _SugestionScreenState extends State<KelolaUrunRembug> {
                                                           .deskripsi
                                                           .toString(),
                                                       style: TextStyle(
-                                                          color: accentcolor,
+                                                          color: surfacecolor,
                                                           fontSize: 12),
                                                     ),
                                                   ),

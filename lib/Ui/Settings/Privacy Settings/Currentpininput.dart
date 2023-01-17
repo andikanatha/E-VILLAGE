@@ -96,6 +96,7 @@ class _PrivasiSettingsState extends State<Currentpinupdate> {
                       margin:
                           EdgeInsets.symmetric(horizontal: 60, vertical: 20),
                       child: PinCodeTextField(
+                        textStyle: TextStyle(color: surfacecolor),
                         onCompleted: (value) {
                           if (value == pin) {
                             Navigator.push(

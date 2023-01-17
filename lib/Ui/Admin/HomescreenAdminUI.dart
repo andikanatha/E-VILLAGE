@@ -12,7 +12,6 @@ import 'package:e_villlage/Ui/Admin/LaporanPDAM.dart';
 import 'package:e_villlage/Ui/Admin/LaporanUrunRembug.dart';
 import 'package:e_villlage/Ui/Admin/LaporansampahUI.dart';
 import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
-import 'package:e_villlage/Ui/NotificationUi/notification_ui.dart';
 import 'package:e_villlage/Ui/ProfileScreenUi/FaqUI.dart';
 import 'package:e_villlage/Ui/ProfileScreenUi/akunscreen_ui.dart';
 import 'package:e_villlage/Ui/Settings/PengaturanUI.dart';
@@ -39,7 +38,6 @@ class _HomeScreenAdminState extends State<HomeScreenAdmin> {
     var date = DateTime.now();
     var dateParse = DateTime.parse(date.toString());
     var formattedhours = "${dateParse.hour}";
-    var formattedtime = "${dateParse.day} ${dateParse.hour}";
 
     setState(() {
       hoursnow = int.parse(formattedhours);
@@ -117,6 +115,13 @@ class _HomeScreenAdminState extends State<HomeScreenAdmin> {
         backgroundColor: primarycolor,
         child: ListView(
           children: [
+            DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Color(0xff4BC4F1),
+                ),
+                child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: SvgPicture.asset("Asset/Svg/iconapk.svg"))),
             Container(
               margin: EdgeInsets.only(top: 20),
               child: ListTile(

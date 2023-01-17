@@ -164,6 +164,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
                           children: [
                             Container(
                               child: TextFormField(
+                                  style: TextStyle(color: surfacecolor),
                                   controller: month,
                                   onTap: () async {
                                     final selectedmonth =
@@ -200,6 +201,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
                                       ),
                                       hintStyle: GoogleFonts.poppins(
                                         fontSize: 12,
+                                        color: hinttext,
                                       ),
                                       hintText: 'Bulan')),
                             ),
@@ -208,6 +210,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
                             ),
                             Container(
                               child: TextFormField(
+                                  style: TextStyle(color: surfacecolor),
                                   onChanged: (value) {
                                     setState(() {
                                       nominalint = int.parse(value);
@@ -234,6 +237,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
                                       ),
                                       hintStyle: GoogleFonts.poppins(
                                         fontSize: 12,
+                                        color: hinttext,
                                       ),
                                       hintText: 'Nominal')),
                             ),
@@ -244,7 +248,8 @@ class _PembayaranUIState extends State<PembayaranUI> {
                               children: [
                                 Text(
                                   "Masukkan hanya angka, jangan memasukan simbol lain",
-                                  style: TextStyle(fontSize: 10),
+                                  style: TextStyle(
+                                      fontSize: 10, color: surfacecolor),
                                 ),
                                 Text("!",
                                     style: TextStyle(
@@ -256,6 +261,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
                             ),
                             Container(
                               child: TextFormField(
+                                  style: TextStyle(color: surfacecolor),
                                   controller: keterangan,
                                   validator: (val) => val!.isEmpty
                                       ? 'Mohon Isi Keterangan!'
@@ -276,6 +282,7 @@ class _PembayaranUIState extends State<PembayaranUI> {
                                       ),
                                       hintStyle: GoogleFonts.poppins(
                                         fontSize: 12,
+                                        color: hinttext,
                                       ),
                                       hintText: 'Keterangan')),
                             ),

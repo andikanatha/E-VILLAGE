@@ -232,9 +232,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   filled: true,
                   fillColor: inputtxtbg,
-                  hintStyle: GoogleFonts.poppins(
-                    fontSize: 12,
-                  ),
+                  hintStyle: GoogleFonts.poppins(fontSize: 12, color: hinttext),
                   prefixIcon: Icon(
                     Icons.people,
                     color: surfacecolor,
@@ -259,6 +257,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   filled: true,
                   fillColor: inputtxtbg,
                   hintStyle: GoogleFonts.poppins(
+                    color: hinttext,
                     fontSize: 12,
                   ),
                   prefixIcon: Icon(
@@ -286,6 +285,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   filled: true,
                   fillColor: inputtxtbg,
                   hintStyle: GoogleFonts.poppins(
+                    color: hinttext,
                     fontSize: 12,
                   ),
                   prefixIcon: Icon(
@@ -314,6 +314,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   filled: true,
                   fillColor: inputtxtbg,
                   hintStyle: GoogleFonts.poppins(
+                    color: hinttext,
                     fontSize: 12,
                   ),
                   suffixIcon: IconButton(
@@ -352,6 +353,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   filled: true,
                   fillColor: inputtxtbg,
                   hintStyle: GoogleFonts.poppins(
+                    color: hinttext,
                     fontSize: 12,
                   ),
                   suffixIcon: IconButton(

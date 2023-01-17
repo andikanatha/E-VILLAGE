@@ -1,21 +1,10 @@
-import 'dart:convert';
-
-import 'package:e_villlage/Data/Formated/dayformated.dart';
 import 'package:e_villlage/Data/Formated/formated.dart';
-import 'package:e_villlage/Data/Model/ApiResponse.dart';
 import 'package:e_villlage/Data/Model/LaporanAdminModel.dart';
-import 'package:e_villlage/Data/Services/AdminPengeluaran_services.dart';
-import 'package:e_villlage/Data/Services/user_services.dart';
-import 'package:e_villlage/Data/settings.dart';
-import 'package:e_villlage/Ui/Admin/HomescreenAdminUI.dart';
-import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
-import 'package:e_villlage/Ui/HomeScreenUi/homescreen_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/LoadWidget.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 
 class DetailPengeluaran extends StatefulWidget {
   DetailPengeluaran({Key? key, required this.laporan}) : super(key: key);
@@ -34,7 +23,6 @@ class _LaporanPDAMState extends State<DetailPengeluaran> {
         count: int.parse(widget.laporan!.nominal.toString()), decimalDigit: 2);
     keperluan.text = widget.laporan!.keperluan.toString();
     deskripsi.text = widget.laporan!.description.toString();
-    // TODO: implement initState
     super.initState();
   }
 

@@ -1,13 +1,20 @@
+import 'dart:convert';
+
 import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:e_villlage/Data/Model/UserSearchModel.dart';
+import 'package:e_villlage/Data/Services/user_services.dart';
 import 'package:e_villlage/Data/settings.dart';
 import 'package:e_villlage/Icons/navbar_icons_icons.dart';
 import 'package:e_villlage/Ui/HomeScreenUi/homescreen_ui.dart';
+import 'package:e_villlage/Ui/PembayaranUI/KirimsaldoQR.dart';
 import 'package:e_villlage/Ui/PembayaranUI/PembayaranUI.dart';
 import 'package:e_villlage/Ui/ProfileScreenUi/profile_ui.dart';
 import 'package:e_villlage/Ui/RiwayatUi/riwayat_ui.dart';
 import 'package:e_villlage/Ui/SuggestionUi/Urunrembug_ui.dart';
 import 'package:e_villlage/Ui/Theme.dart';
+import 'package:e_villlage/Ui/Widget/LoadWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 
 class NavBotBar extends StatefulWidget {
@@ -18,6 +25,9 @@ class NavBotBar extends StatefulWidget {
 }
 
 class _NavBotBarState extends State<NavBotBar> {
+  UserSearchModel? userSearchModel;
+  bool isload = false;
+
   ScanResult? scanResult;
   int _index = 0;
 
@@ -116,29 +126,75 @@ class _NavBotBarState extends State<NavBotBar> {
         _showModalSheet(_index);
       } else if (scanResult!.rawContent == "") {
       } else {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text("Kode Qr Tidak Sesuai"),
-              content: Text(
-                  "Mohon maaf, kode qr tidak sesuai, harap scan qrcode dengan sesuai dan coba lagi!"),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("Tutup")),
-                TextButton(
-                    onPressed: () {
-                      _scan();
-                      Navigator.pop(context);
-                    },
-                    child: Text("Coba lagi")),
-              ],
-            );
-          },
-        );
+        String token = await getToken();
+
+        final responsegetuser = await http.get(
+            Uri.parse(baseurl_evillageapi +
+                "/api/user/get/" +
+                scanResult!.rawContent.toString()),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token'
+            });
+
+        userSearchModel = UserSearchModel.fromJson(
+            json.decode(responsegetuser.body.toString()));
+
+        if (userSearchModel!.users!.length > 0) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("Perhatian"),
+                content: Text("Apa kamu yakin untuk kirim saldo ke " +
+                    userSearchModel!.users![0].username.toString() +
+                    "?"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("Tidak")),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => KirimSaldoQR(
+                                  user: userSearchModel!.users![0]),
+                            ));
+                      },
+                      child: Text("Ya"))
+                ],
+              );
+            },
+          );
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("Kode Qr Tidak Sesuai"),
+                content: Text(
+                    "Mohon maaf, kode qr tidak sesuai, harap scan qrcode dengan sesuai dan coba lagi!"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("Tutup")),
+                  TextButton(
+                      onPressed: () {
+                        _scan();
+                        Navigator.pop(context);
+                      },
+                      child: Text("Coba lagi")),
+                ],
+              );
+            },
+          );
+        }
       }
     }
   }
@@ -163,52 +219,55 @@ class _NavBotBarState extends State<NavBotBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: screen[_screenindex],
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          child: Icon(
-            NavbarIcons.scan,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            _scan();
-          }),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        child: BottomNavigationBar(
-          backgroundColor: primarycolor,
-          type: BottomNavigationBarType.fixed,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(NavbarIcons.home),
-              label: "Beranda",
+    return isload
+        ? isloadingwidget()
+        : Scaffold(
+            body: screen[_screenindex],
+            floatingActionButton: FloatingActionButton(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                child: Icon(
+                  NavbarIcons.scan,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  _scan();
+                }),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            bottomNavigationBar: BottomAppBar(
+              shape: CircularNotchedRectangle(),
+              child: BottomNavigationBar(
+                backgroundColor: primarycolor,
+                type: BottomNavigationBarType.fixed,
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: Icon(NavbarIcons.home),
+                    label: "Beranda",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(NavbarIcons.people),
+                    label: "Saran",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(NavbarIcons.history),
+                    label: "Riwayat",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(NavbarIcons.profile),
+                    label: "Profile",
+                  ),
+                ],
+                currentIndex: _screenindex,
+                selectedItemColor: Theme.of(context).colorScheme.primary,
+                unselectedItemColor: Colors.grey,
+                showUnselectedLabels: true,
+                onTap: (value) {
+                  setState(() {
+                    _screenindex = value;
+                  });
+                },
+              ),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(NavbarIcons.people),
-              label: "Saran",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(NavbarIcons.history),
-              label: "Riwayat",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(NavbarIcons.profile),
-              label: "Profile",
-            ),
-          ],
-          currentIndex: _screenindex,
-          selectedItemColor: Theme.of(context).colorScheme.primary,
-          unselectedItemColor: Colors.grey,
-          showUnselectedLabels: true,
-          onTap: (value) {
-            setState(() {
-              _screenindex = value;
-            });
-          },
-        ),
-      ),
-    );
+          );
   }
 }

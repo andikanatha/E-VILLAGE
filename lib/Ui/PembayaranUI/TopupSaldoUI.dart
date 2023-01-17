@@ -132,6 +132,7 @@ class _TopupSaldoUIState extends State<TopupSaldoUI> {
                                         color: surfacecolor,
                                       ),
                                       hintStyle: GoogleFonts.poppins(
+                                        color: hinttext,
                                         fontSize: 12,
                                       ),
                                       hintText: 'Nominal')),
@@ -176,6 +177,7 @@ class _TopupSaldoUIState extends State<TopupSaldoUI> {
                                         color: surfacecolor,
                                       ),
                                       hintStyle: GoogleFonts.poppins(
+                                        color: hinttext,
                                         fontSize: 12,
                                       ),
                                       hintText: 'Catatan')),

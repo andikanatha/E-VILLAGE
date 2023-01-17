@@ -46,6 +46,7 @@ dependencies:
   month_year_picker: ^0.2.0+3
   pin_code_fields: ^7.4.0
   popover: ^0.2.6+3
+  qr_flutter: ^4.0.0
   shared_preferences: ^2.0.15
   shared_preferences_android: ^2.0.14
 

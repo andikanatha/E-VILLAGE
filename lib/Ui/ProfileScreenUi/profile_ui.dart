@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:e_villlage/Data/LocalSettings.dart';
 import 'package:e_villlage/Data/Model/ApiResponse.dart';
 import 'package:e_villlage/Data/Model/UserModel.dart';
 import 'package:e_villlage/Data/Services/user_services.dart';
@@ -257,13 +258,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ],
                                   ),
                                   child: ListTile(
-                                    onTap: () {
-                                      Navigator.push(
+                                    onTap: () async {
+                                      final reload = await Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 PengaturanUI(),
                                           ));
+                                      if (!mounted) return;
+                                      setState(() {
+                                        isload = true;
+                                        getuser();
+                                      });
                                     },
                                     trailing: Icon(
                                       Icons.arrow_forward_ios_rounded,

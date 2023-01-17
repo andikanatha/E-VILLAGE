@@ -271,9 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Icons.email,
                     color: surfacecolor,
                   ),
-                  hintStyle: GoogleFonts.poppins(
-                    fontSize: 12,
-                  ),
+                  hintStyle: GoogleFonts.poppins(fontSize: 12, color: hinttext),
                   hintText: 'masukkan email anda')),
         ),
         Container(
@@ -303,9 +301,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: surfacecolor,
                       )),
                   filled: true,
-                  hintStyle: GoogleFonts.poppins(
-                    fontSize: 12,
-                  ),
+                  hintStyle: GoogleFonts.poppins(fontSize: 12, color: hinttext),
                   fillColor: inputtxtbg,
                   prefixIcon: Icon(
                     Icons.lock,

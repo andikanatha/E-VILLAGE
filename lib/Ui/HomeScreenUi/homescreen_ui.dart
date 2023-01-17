@@ -20,6 +20,7 @@ import 'package:e_villlage/Ui/PembayaranUI/ListtopupsaldoUI.dart';
 import 'package:e_villlage/Ui/PembayaranUI/PembayaranDetail.dart';
 import 'package:e_villlage/Ui/PembayaranUI/PembayaranUI.dart';
 import 'package:e_villlage/Ui/PembayaranUI/TopupSaldoUI.dart';
+import 'package:e_villlage/Ui/Qrcode/MakeQrcode.dart';
 import 'package:e_villlage/Ui/RiwayatUi/riwayat_ui.dart';
 import 'package:e_villlage/Ui/SuggestionUi/CommentRembugUI.dart';
 import 'package:e_villlage/Ui/SuggestionUi/Urunrembug_ui.dart';
@@ -216,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Row(
                                   children: [
                                     Expanded(
-                                      flex: 5,
+                                      flex: 3,
                                       child: Column(
                                         children: [
                                           Row(
@@ -224,8 +225,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Text(
                                                 user!.username.toString() !=
                                                         null
-                                                    ? user!.username.toString()
-                                                    : "Pengguna",
+                                                    ? "Halo, " +
+                                                        user!.username
+                                                            .toString()
+                                                    : "Halo, Pengguna",
                                                 style: TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.w700,
@@ -263,6 +266,38 @@ class _HomeScreenState extends State<HomeScreen> {
                                         child: Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
+                                        Container(
+                                            margin: EdgeInsets.only(right: 5),
+                                            padding: const EdgeInsets.all(5),
+                                            decoration: BoxDecoration(
+                                              color: primarycolor,
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                              boxShadow: const [
+                                                BoxShadow(
+                                                  color: Color.fromARGB(
+                                                      18, 0, 0, 0),
+                                                  spreadRadius: 2,
+                                                  blurRadius: 7,
+                                                  offset: Offset(0,
+                                                      3), // changes position of shadow
+                                                ),
+                                              ],
+                                            ),
+                                            child: InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ReqQrCode(),
+                                                      ));
+                                                },
+                                                child: Container(
+                                                    child: Icon(
+                                                  Icons.qr_code,
+                                                  color: secondarycolorhigh,
+                                                )))),
                                         Container(
                                             padding: const EdgeInsets.all(5),
                                             decoration: BoxDecoration(

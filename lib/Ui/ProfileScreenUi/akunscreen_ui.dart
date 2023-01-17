@@ -250,6 +250,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                                 filled: true,
                                                 fillColor: inputtxtbg,
                                                 hintStyle: GoogleFonts.poppins(
+                                                  color: hinttext,
                                                   fontSize: 12,
                                                 ),
                                                 hintText: 'nama pengguna')),
@@ -289,6 +290,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                                 fillColor: inputtxtbg,
                                                 hintStyle: GoogleFonts.poppins(
                                                   fontSize: 12,
+                                                  color: hinttext,
                                                 ),
                                                 hintText:
                                                     'nama lengkap pengguna')),

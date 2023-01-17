@@ -1,10 +1,8 @@
-import 'package:e_villlage/Data/Model/LaporModel.dart';
 import 'package:e_villlage/Data/Model/LaporanModel.dart';
 import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:e_villlage/Ui/RiwayatUi/riwayat_ui.dart';
 
 class DetaillaporanAdmin extends StatefulWidget {
   DetaillaporanAdmin({Key? key, required this.laporan}) : super(key: key);
@@ -22,7 +20,6 @@ class _DetaillaporanState extends State<DetaillaporanAdmin> {
   void initState() {
     deskripsi.text = widget.laporan!.deskripsi.toString();
     tempat_kejadian.text = widget.laporan!.tempatKejadian.toString();
-    // TODO: implement initState
     super.initState();
   }
 

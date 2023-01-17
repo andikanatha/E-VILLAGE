@@ -108,6 +108,7 @@ class _PrivasiSettingsState extends State<PasswordUpdate> {
                         children: [
                           Container(
                             child: TextFormField(
+                                style: TextStyle(color: surfacecolor),
                                 controller: passwordlama,
                                 validator: (val) => val!.isEmpty
                                     ? 'Mohon Masukkan Password Lama Anda!'
@@ -124,6 +125,7 @@ class _PrivasiSettingsState extends State<PasswordUpdate> {
                                     fillColor: inputtxtbg,
                                     hintStyle: GoogleFonts.poppins(
                                       fontSize: 12,
+                                      color: hinttext,
                                     ),
                                     hintText: 'masukkan password lama anda')),
                           ),
@@ -139,6 +141,7 @@ class _PrivasiSettingsState extends State<PasswordUpdate> {
                         children: [
                           Container(
                             child: TextFormField(
+                                style: TextStyle(color: surfacecolor),
                                 controller: passwordbaru,
                                 validator: (val) => val!.isEmpty
                                     ? 'Mohon Masukkan Password Baru Anda!'
@@ -155,6 +158,7 @@ class _PrivasiSettingsState extends State<PasswordUpdate> {
                                     fillColor: inputtxtbg,
                                     hintStyle: GoogleFonts.poppins(
                                       fontSize: 12,
+                                      color: hinttext,
                                     ),
                                     hintText: 'masukkan password baru anda')),
                           ),
@@ -170,6 +174,7 @@ class _PrivasiSettingsState extends State<PasswordUpdate> {
                         children: [
                           Container(
                             child: TextFormField(
+                                style: TextStyle(color: surfacecolor),
                                 controller: passwordbarukonfirm,
                                 validator: (val) => val != passwordbaru.text
                                     ? 'Password yang anda masukkan tidak sesuai'
@@ -186,6 +191,7 @@ class _PrivasiSettingsState extends State<PasswordUpdate> {
                                     fillColor: inputtxtbg,
                                     hintStyle: GoogleFonts.poppins(
                                       fontSize: 12,
+                                      color: hinttext,
                                     ),
                                     hintText: 'konfirmasi password baru anda')),
                           ),

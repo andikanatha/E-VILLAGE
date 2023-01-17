@@ -30,6 +30,7 @@ class _KirimSaldoUIState extends State<KirimSaldoUI> {
   TextEditingController user = TextEditingController();
   TextEditingController keterangan = TextEditingController();
   bool isload = true;
+  bool isloadgetusers = false;
   int nominalint = 0;
   String query = "`";
   String pin = "";
@@ -84,6 +85,9 @@ class _KirimSaldoUIState extends State<KirimSaldoUI> {
     String token = await getToken();
 
     if (query != "") {
+      setState(() {
+        isloadgetusers = true;
+      });
       final responsegetuser = await http.get(
           Uri.parse(baseurl_evillageapi + "/api/user/search/" + query),
           headers: {
@@ -97,6 +101,7 @@ class _KirimSaldoUIState extends State<KirimSaldoUI> {
 
     setState(() {
       isload = false;
+      isloadgetusers = false;
     });
   }
 
@@ -174,100 +179,112 @@ class _KirimSaldoUIState extends State<KirimSaldoUI> {
                                               ),
                                               hintStyle: GoogleFonts.poppins(
                                                 fontSize: 12,
+                                                color: hinttext,
                                               ),
                                               hintText: 'Username')),
-                                      userSearchModel!.users!.length > 0
-                                          ? ListView.builder(
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemCount: userSearchModel!
-                                                  .users!.length,
-                                              shrinkWrap: true,
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                return ListTile(
-                                                  onTap: () {
-                                                    if (userSearchModel!
-                                                            .users![index].id ==
-                                                        idusernow) {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (context) {
-                                                          return AlertDialog(
-                                                            actions: [
-                                                              TextButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child: Text(
-                                                                      "Oke"))
-                                                            ],
-                                                            title: Text(
-                                                                "Perhatian"),
-                                                            content: Text(
-                                                                "User yang anda pilih merupakan diri anda sendiri, mohon memilih user dengan valid"),
+                                      isloadgetusers
+                                          ? Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            )
+                                          : userSearchModel!.users!.length > 0
+                                              ? ListView.builder(
+                                                  physics:
+                                                      NeverScrollableScrollPhysics(),
+                                                  itemCount: userSearchModel!
+                                                      .users!.length,
+                                                  shrinkWrap: true,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    return ListTile(
+                                                      onTap: () {
+                                                        if (userSearchModel!
+                                                                .users![index]
+                                                                .id ==
+                                                            idusernow) {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return AlertDialog(
+                                                                actions: [
+                                                                  TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child: Text(
+                                                                          "Oke"))
+                                                                ],
+                                                                title: Text(
+                                                                    "Perhatian"),
+                                                                content: Text(
+                                                                    "User yang anda pilih merupakan diri anda sendiri, mohon memilih user dengan valid"),
+                                                              );
+                                                            },
                                                           );
-                                                        },
-                                                      );
-                                                    } else {
-                                                      setState(() {
-                                                        user.text =
-                                                            userSearchModel!
-                                                                .users![index]
-                                                                .username
-                                                                .toString();
-                                                      });
-                                                      ;
-                                                    }
-                                                  },
-                                                  title: Text(
-                                                      userSearchModel!
-                                                          .users![index]
-                                                          .username
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          color: surfacecolor)),
-                                                  leading: Container(
-                                                    height: 40,
-                                                    width: 40,
-                                                    child: userSearchModel!
-                                                                .users![index]
-                                                                .imageUser !=
-                                                            null
-                                                        ? ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        100),
-                                                            child: Image.network(
+                                                        } else {
+                                                          setState(() {
+                                                            user.text =
                                                                 userSearchModel!
                                                                     .users![
                                                                         index]
-                                                                    .imageUser
-                                                                    .toString()),
-                                                          )
-                                                        : SvgPicture.asset(
-                                                            "Asset/Svg/DefaultImg.svg"),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.grey,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(100)),
-                                                  ),
-                                                );
-                                              },
-                                            )
-                                          : Container(
-                                              child: Center(
-                                                child: Text(
-                                                    "User tidak ditemukan",
-                                                    style: TextStyle(
-                                                        color: surfacecolor)),
-                                              ),
-                                            )
+                                                                    .username
+                                                                    .toString();
+                                                          });
+                                                          ;
+                                                        }
+                                                      },
+                                                      title: Text(
+                                                          userSearchModel!
+                                                              .users![index]
+                                                              .username
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              color:
+                                                                  surfacecolor)),
+                                                      subtitle: Text(
+                                                          userSearchModel!
+                                                              .users![index]
+                                                              .name
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              color:
+                                                                  surfacecolor)),
+                                                      leading: Container(
+                                                        height: 40,
+                                                        width: 40,
+                                                        child: userSearchModel!
+                                                                    .users![
+                                                                        index]
+                                                                    .imageUser !=
+                                                                null
+                                                            ? ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            100),
+                                                                child: Image.network(
+                                                                    userSearchModel!
+                                                                        .users![
+                                                                            index]
+                                                                        .imageUser
+                                                                        .toString()),
+                                                              )
+                                                            : SvgPicture.asset(
+                                                                "Asset/Svg/DefaultImg.svg"),
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.grey,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        100)),
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                              : Container()
                                     ],
                                   ),
                                   SizedBox(
@@ -308,6 +325,7 @@ class _KirimSaldoUIState extends State<KirimSaldoUI> {
                                       ),
                                       hintStyle: GoogleFonts.poppins(
                                         fontSize: 12,
+                                        color: hinttext,
                                       ),
                                       hintText: 'Nominal')),
                             ),
@@ -349,6 +367,7 @@ class _KirimSaldoUIState extends State<KirimSaldoUI> {
                                       fillColor: inputtxtbg,
                                       hintStyle: GoogleFonts.poppins(
                                         fontSize: 12,
+                                        color: hinttext,
                                       ),
                                       hintText: 'Keterangan')),
                             ),

@@ -11,6 +11,7 @@ import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class LaporanPdam extends StatefulWidget {
   LaporanPdam({Key? key}) : super(key: key);
@@ -21,19 +22,40 @@ class LaporanPdam extends StatefulWidget {
 
 class _LaporanPDAMState extends State<LaporanPdam> {
   Getpembayaran? getpembayaran;
+  String querypembayaran = "";
+  TextEditingController pembayaranquery = TextEditingController();
   bool isload = true;
 
   void getdata() async {
     String token = await getToken();
-    final responsepembayaran = await http.get(
-        Uri.parse(baseurl_evillageapi + "/api/user/transaksi/pdam"),
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
 
-    getpembayaran =
-        Getpembayaran.fromJson(json.decode(responsepembayaran.body.toString()));
+    if (querypembayaran != "") {
+      final responsepembayaransrc = await http.get(
+          Uri.parse(baseurl_evillageapi +
+              "/api/user/pemasukan/pdam/" +
+              querypembayaran.toString()),
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
+          });
+
+      setState(() {
+        getpembayaran = Getpembayaran.fromJson(
+            json.decode(responsepembayaransrc.body.toString()));
+      });
+    } else {
+      final responsepembayaran = await http.get(
+          Uri.parse(baseurl_evillageapi + "/api/user/transaksi/pdam"),
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
+          });
+
+      setState(() {
+        getpembayaran = Getpembayaran.fromJson(
+            json.decode(responsepembayaran.body.toString()));
+      });
+    }
 
     setState(() {
       isload = false;
@@ -75,6 +97,29 @@ class _LaporanPDAMState extends State<LaporanPdam> {
                         height: 50,
                         margin: EdgeInsets.only(top: 15, left: 20, right: 20),
                         child: TextFormField(
+                            readOnly: true,
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime.now());
+
+                              if (pickedDate != null) {
+                                setState(() {
+                                  String formattedDate =
+                                      DateFormat('yyyy-MM-dd')
+                                          .format(pickedDate);
+                                  querypembayaran = formattedDate;
+                                  pembayaranquery.text = formatTglIndo(
+                                      date: pickedDate.toString());
+
+                                  getdata();
+                                });
+                              } else {}
+                            },
+                            style: TextStyle(color: surfacecolor),
+                            controller: pembayaranquery,
                             validator: (val) => val!.isEmpty ? '' : null,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(
@@ -84,16 +129,28 @@ class _LaporanPDAMState extends State<LaporanPdam> {
                                     style: BorderStyle.none,
                                   ),
                                 ),
+                                suffixIcon: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        pembayaranquery.text = "";
+                                        querypembayaran = "";
+                                        getdata();
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Icons.cancel,
+                                      color: surfacecolor,
+                                    )),
                                 filled: true,
                                 fillColor: inputtxtbg,
                                 hintStyle: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                ),
+                                    fontSize: 12, color: surfacecolor),
                                 prefixIcon: Icon(
                                   Icons.search,
                                   color: surfacecolor,
                                 ),
-                                hintText: 'Anda ingin mencari apa?')),
+                                hintText:
+                                    'Pilih tanggal yang ingin anda cari...')),
                       ),
                       SizedBox(
                         height: 20,
@@ -105,7 +162,7 @@ class _LaporanPDAMState extends State<LaporanPdam> {
                             DataColumn(
                                 label: Container(
                               width: 100,
-                              child: Text('Nama',
+                              child: Text('Username',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: surfacecolor)),

@@ -104,6 +104,7 @@ class _LaporanPDAMState extends State<TambahPengeluaran> {
                               fillColor: inputtxtbg,
                               hintStyle: GoogleFonts.poppins(
                                 fontSize: 12,
+                                color: hinttext,
                               ),
                               hintText: 'masukkan nominal saldo')),
                       Row(
@@ -138,6 +139,7 @@ class _LaporanPDAMState extends State<TambahPengeluaran> {
                               fillColor: inputtxtbg,
                               hintStyle: GoogleFonts.poppins(
                                 fontSize: 12,
+                                color: hinttext,
                               ),
                               hintText: 'masukkan keperluan saldo')),
                       SizedBox(
@@ -161,6 +163,7 @@ class _LaporanPDAMState extends State<TambahPengeluaran> {
                               fillColor: inputtxtbg,
                               hintStyle: GoogleFonts.poppins(
                                 fontSize: 12,
+                                color: hinttext,
                               ),
                               hintText: 'deskripsi')),
                       SizedBox(

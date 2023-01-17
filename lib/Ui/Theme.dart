@@ -18,6 +18,7 @@ Color secondarycolor = const Color.fromARGB(255, 48, 167, 207);
 Color secondarycolorhigh = Color.fromARGB(255, 130, 222, 255);
 Color inputtxtbg = Color.fromARGB(255, 218, 236, 242);
 Color defaultbgimg = Color.fromARGB(255, 217, 217, 217);
+Color hinttext = Colors.grey;
 
 MaterialColor themecolor = MaterialColor(
   const Color.fromARGB(255, 75, 197, 241).value,

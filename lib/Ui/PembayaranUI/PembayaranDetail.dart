@@ -1,4 +1,5 @@
 import 'package:e_villlage/Data/Formated/dayformated.dart';
+import 'package:e_villlage/Data/Formated/formated.dart';
 import 'package:e_villlage/Data/Model/ApiResponse.dart';
 import 'package:e_villlage/Data/Model/PembayaranDetailModel.dart';
 import 'package:e_villlage/Data/Model/PembayaranModelGet.dart';
@@ -189,7 +190,7 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Nama",
+                              "Nama Pengirim",
                               style: TextStyle(
                                   color: Color.fromARGB(255, 121, 121, 121),
                                   fontSize: 12,
@@ -323,7 +324,10 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                               textAlign: TextAlign.left,
                             ),
                             Text(
-                              detailTrx!.totalTrx.toString(),
+                              Idrcvt.convertToIdr(
+                                  count:
+                                      int.parse(detailTrx!.totalTrx.toString()),
+                                  decimalDigit: 2),
                               style: TextStyle(
                                   color: surfacecolor,
                                   fontSize: 15,
@@ -336,7 +340,7 @@ class _DetailpembayaranState extends State<Detailpembayaran> {
                           ],
                         ),
                         SizedBox(
-                          height: 80,
+                          height: 20,
                         ),
                         longbtn(
                             ontap: () {

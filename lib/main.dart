@@ -5,7 +5,6 @@ import 'package:e_villlage/Data/Model/ApiResponse.dart';
 import 'package:e_villlage/Data/Services/user_services.dart';
 import 'package:e_villlage/Data/settings.dart';
 import 'package:e_villlage/Ui/Admin/HomescreenAdminUI.dart';
-import 'package:e_villlage/Ui/GetStarted/Login_ui.dart';
 import 'package:e_villlage/Ui/OnBoardingScreen/OnboardingUI.dart';
 import 'package:e_villlage/Ui/Theme.dart';
 import 'package:e_villlage/Ui/Widget/Navbar.dart';
@@ -54,6 +53,7 @@ class _CheckLoginState extends State<CheckLogin> {
       boxcolor = Color.fromARGB(255, 65, 103, 126);
       surfacecolor = Colors.white;
       inputtxtbg = Color.fromARGB(255, 65, 103, 126);
+      hinttext = Color.fromARGB(255, 213, 213, 213);
     }
     String token = await getToken();
     String role = await getUserrole();

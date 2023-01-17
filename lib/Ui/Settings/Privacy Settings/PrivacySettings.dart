@@ -90,7 +90,7 @@ class _PrivasiSettingsState extends State<PrivasiSettings> {
                         color: accentcolor,
                       ),
                       leading: Icon(
-                        Icons.help,
+                        Icons.pin,
                         color: accentcolor,
                       ),
                       title: Text(
@@ -127,7 +127,7 @@ class _PrivasiSettingsState extends State<PrivasiSettings> {
                         color: accentcolor,
                       ),
                       leading: Icon(
-                        Icons.help,
+                        Icons.lock,
                         color: accentcolor,
                       ),
                       title: Text(

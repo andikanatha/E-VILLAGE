@@ -105,6 +105,7 @@ class _PrivasiSettingsState extends State<UpdatePin> {
                       children: [
                         Text(
                           "Masukkan pin baru",
+                          style: TextStyle(color: surfacecolor),
                         ),
                       ],
                     ),
@@ -147,6 +148,7 @@ class _PrivasiSettingsState extends State<UpdatePin> {
                             },
                           );
                         },
+                        textStyle: TextStyle(color: surfacecolor),
                         keyboardType: TextInputType.number,
                         pinTheme: PinTheme(
                           fieldHeight: 50,

@@ -169,24 +169,47 @@ class _CommentUrunRembugUIState extends State<CommentUrunRembugUI> {
               child: SizedBox(
                 height: 48,
                 child: TextFormField(
+                  style: TextStyle(color: surfacecolor),
                   controller: comment,
                   decoration: InputDecoration(
+                    hintStyle: TextStyle(
+                      color: hinttext,
+                    ),
                     hintText: "Tambah komentar",
                     fillColor: inputtxtbg,
                     filled: true,
                     suffixIcon: InkWell(
                       onTap: () {
-                        setState(() {
-                          isload = true;
-                          _postrembug();
-                        });
+                        if (comment.text != "") {
+                          setState(() {
+                            isload = true;
+                            _postrembug();
+                          });
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text("Perhatian"),
+                                content: Text("Komentar tidak boleh kosong!"),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("Oke"))
+                                ],
+                              );
+                            },
+                          );
+                        }
                       },
                       child: SizedBox(
                           height: 20,
                           width: 20,
                           child: Icon(
                             Icons.send_outlined,
-                            color: secondarycolor,
+                            color: surfacecolor,
                           )),
                     ),
                   ),

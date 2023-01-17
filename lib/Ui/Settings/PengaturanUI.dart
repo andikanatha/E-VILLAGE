@@ -2,6 +2,7 @@ import 'package:e_villlage/Data/LocalSettings.dart';
 import 'package:e_villlage/Ui/ProfileScreenUi/FaqUI.dart';
 import 'package:e_villlage/Ui/Settings/Privacy%20Settings/PrivacySettings.dart';
 import 'package:e_villlage/Ui/Theme.dart';
+import 'package:e_villlage/Ui/Widget/Navbar.dart';
 import 'package:e_villlage/Ui/Widget/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,6 +39,7 @@ class _PengaturanUIState extends State<PengaturanUI> {
         boxcolor = Color.fromARGB(255, 65, 103, 126);
         surfacecolor = Colors.white;
         inputtxtbg = Color.fromARGB(255, 65, 103, 126);
+        hinttext = Color.fromARGB(255, 213, 213, 213);
       });
     } else {
       await pref.setBool('theme', false);
@@ -48,6 +50,7 @@ class _PengaturanUIState extends State<PengaturanUI> {
         inputtxtbg = Color.fromARGB(255, 218, 236, 242);
         primarycolor = Colors.white;
         accentcolor = Color.fromARGB(255, 130, 222, 255);
+        hinttext = Colors.grey;
       });
     }
     getsettings();
@@ -115,7 +118,11 @@ class _PengaturanUIState extends State<PengaturanUI> {
         title: "Pengaturan",
         btncek: ModalRoute.of(context)?.canPop ?? false,
         ontap: () {
-          Navigator.pop(context);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NavBotBar(),
+              ));
         },
         backgroundcolor: Theme.of(context).colorScheme.primary,
       ),
@@ -160,7 +167,7 @@ class _PengaturanUIState extends State<PengaturanUI> {
                         color: surfacecolor,
                       ),
                       leading: Icon(
-                        Icons.help,
+                        Icons.color_lens,
                         color: surfacecolor,
                       ),
                       title: Text(
@@ -197,7 +204,7 @@ class _PengaturanUIState extends State<PengaturanUI> {
                         color: surfacecolor,
                       ),
                       leading: Icon(
-                        Icons.help,
+                        Icons.privacy_tip,
                         color: surfacecolor,
                       ),
                       title: Text(

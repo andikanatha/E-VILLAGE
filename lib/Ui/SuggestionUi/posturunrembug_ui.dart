@@ -178,6 +178,7 @@ class _UrunRembugPostUIState extends State<UrunRembugPostUI> {
                                         fillColor: inputtxtbg,
                                         hintStyle: GoogleFonts.poppins(
                                           fontSize: 12,
+                                          color: hinttext,
                                         ),
                                         hintText: 'masukkan saran anda')),
                                 Container(

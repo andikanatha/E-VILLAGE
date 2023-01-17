@@ -98,7 +98,10 @@ class _PostLaporKadesUIState extends State<PostLaporKadesUI> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Gambar"),
+                              Text(
+                                "Gambar",
+                                style: TextStyle(color: surfacecolor),
+                              ),
                               InkWell(
                                 onTap: () {
                                   getImage();
@@ -135,15 +138,18 @@ class _PostLaporKadesUIState extends State<PostLaporKadesUI> {
                                           fontSize: 10, color: Colors.red)),
                                   Text(
                                     "Opsional, bisa menambahkan atau tidak",
-                                    style: TextStyle(fontSize: 10),
+                                    style: TextStyle(
+                                        fontSize: 10, color: surfacecolor),
                                   ),
                                 ],
                               ),
                               SizedBox(
                                 height: 20,
                               ),
-                              Text("Deskripsi Laporan"),
+                              Text("Deskripsi Laporan",
+                                  style: TextStyle(color: surfacecolor)),
                               TextFormField(
+                                  style: TextStyle(color: surfacecolor),
                                   controller: deskripsi,
                                   maxLines: 4,
                                   validator: (val) => val!.isEmpty
@@ -160,6 +166,7 @@ class _PostLaporKadesUIState extends State<PostLaporKadesUI> {
                                       filled: true,
                                       fillColor: inputtxtbg,
                                       hintStyle: GoogleFonts.poppins(
+                                        color: hinttext,
                                         fontSize: 12,
                                       ),
                                       hintText:
@@ -167,8 +174,10 @@ class _PostLaporKadesUIState extends State<PostLaporKadesUI> {
                               SizedBox(
                                 height: 20,
                               ),
-                              Text("Tempat Kejadian"),
+                              Text("Tempat Kejadian",
+                                  style: TextStyle(color: surfacecolor)),
                               TextFormField(
+                                  style: TextStyle(color: surfacecolor),
                                   controller: tempat_kejadian,
                                   maxLines: 2,
                                   validator: (val) => val!.isEmpty
@@ -185,11 +194,12 @@ class _PostLaporKadesUIState extends State<PostLaporKadesUI> {
                                       filled: true,
                                       fillColor: inputtxtbg,
                                       hintStyle: GoogleFonts.poppins(
+                                        color: hinttext,
                                         fontSize: 12,
                                       ),
                                       hintText: 'Tempat kejadian perkara')),
                               Container(
-                                margin: EdgeInsets.only(top: 100),
+                                margin: EdgeInsets.only(top: 50),
                                 child: longbtn(
                                     ontap: () {
                                       if (formkey.currentState!.validate()) {
